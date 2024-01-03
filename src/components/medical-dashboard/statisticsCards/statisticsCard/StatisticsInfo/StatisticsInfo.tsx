@@ -13,7 +13,9 @@ interface StatisticsInfoProps {
 export const StatisticsInfo: React.FC<StatisticsInfoProps> = ({ name, value, prevValue }) => {
   return (
     <BaseSpace direction="vertical" size={6}>
-      <S.Title>{name}</S.Title>
+      <S.Title>
+        {name} - {value}
+      </S.Title>
 
       {prevValue && (
         <S.Text>

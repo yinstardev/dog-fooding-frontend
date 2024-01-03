@@ -16,6 +16,9 @@ import RequireAuth from '@app/components/router/RequireAuth';
 import { withLoading } from '@app/hocs/withLoading.hoc';
 import NftDashboardPage from '@app/pages/DashboardPages/NftDashboardPage';
 import MedicalDashboardPage from '@app/pages/DashboardPages/MedicalDashboardPage';
+import TSEHomeDashboardPage from '@app/pages/DashboardPages/TSEHomeDashboardPage';
+import { SupportCentralLiveboardPage } from '@app/pages/DashboardPages/SupportCentralLiveboardPage';
+import { ChampagneFullAppPage } from '@app/pages/DashboardPages/ChampagneFullAppPage';
 
 const NewsFeedPage = React.lazy(() => import('@app/pages/NewsFeedPage'));
 const DataTablesPage = React.lazy(() => import('@app/pages/DataTablesPage'));
@@ -60,8 +63,16 @@ const ReactSimpleMaps = React.lazy(() => import('@app/pages/maps/ReactSimpleMaps
 const PigeonsMaps = React.lazy(() => import('@app/pages/maps/PigeonsMapsPage/PigeonsMapsPage'));
 const Logout = React.lazy(() => import('./Logout'));
 
-export const NFT_DASHBOARD_PATH = '/';
+export const NFT_DASHBOARD_PATH = '/nft';
+export const TSE_HOME_PAGE_PATH = '/';
 export const MEDICAL_DASHBOARD_PATH = '/medical-dashboard';
+export const SUPPORT_CENTRAL_LIVEBOARD_PATH = '/support-central';
+export const CHAMPAGNE_FULL_APP_PATH = '/champagne';
+
+// TSE
+const TseHomeDashboard = withLoading(TSEHomeDashboardPage);
+const SupportCentralLiveboard = withLoading(SupportCentralLiveboardPage);
+const ChampagneFullApp = withLoading(ChampagneFullAppPage);
 
 const MedicalDashboard = withLoading(MedicalDashboardPage);
 const NftDashboard = withLoading(NftDashboardPage);
@@ -128,9 +139,13 @@ export const AppRouter: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path={NFT_DASHBOARD_PATH} element={protectedLayout}>
-          <Route index element={<NftDashboard />} />
+        <Route path={TSE_HOME_PAGE_PATH} element={protectedLayout}>
+          <Route index element={<TseHomeDashboard />} />
+          <Route path={SUPPORT_CENTRAL_LIVEBOARD_PATH} element={<SupportCentralLiveboard />} />
+          <Route path={CHAMPAGNE_FULL_APP_PATH} element={<ChampagneFullApp />} />
+
           <Route path={MEDICAL_DASHBOARD_PATH} element={<MedicalDashboard />} />
+          <Route path={NFT_DASHBOARD_PATH} element={<NftDashboard />} />
           <Route path="apps">
             <Route path="feed" element={<NewsFeed />} />
           </Route>
