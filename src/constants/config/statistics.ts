@@ -3,6 +3,9 @@ import { ReactComponent as BonesIcon } from '@app/assets/icons/bones.svg';
 import { ReactComponent as FatIcon } from '@app/assets/icons/fat.svg';
 import { ReactComponent as ProteinIcon } from '@app/assets/icons/protein.svg';
 import { ReactComponent as WaterBalanceIcon } from '@app/assets/icons/water.svg';
+import { ReactComponent as P0Icon } from '@app/assets/icons/p0-jira.svg';
+import { ReactComponent as P1Icon } from '@app/assets/icons/P1-jira.svg';
+import { ReactComponent as P2Icon } from '@app/assets/icons/p2-jira.svg';
 
 export type StatisticColor = 'primary' | 'error' | 'secondary' | 'success';
 
@@ -17,30 +20,23 @@ interface ConfigStatistic {
 export const statistics: ConfigStatistic[] = [
   {
     id: 1,
-    name: 'protein',
-    title: 'medical-dashboard.protein',
+    name: 'P0',
+    title: 'P0 Backlog',
     color: 'success',
-    Icon: ProteinIcon,
+    Icon: P0Icon,
   },
   {
     id: 2,
-    name: 'fat',
-    title: 'medical-dashboard.fat',
+    name: 'P1',
+    title: 'P1 Backlog',
     color: 'error',
-    Icon: FatIcon,
+    Icon: P1Icon,
   },
   {
     id: 3,
-    name: 'bones',
-    title: 'medical-dashboard.bones',
+    name: 'P2',
+    title: 'P2 Backlog',
     color: 'primary',
-    Icon: BonesIcon,
-  },
-  {
-    id: 4,
-    name: 'water',
-    title: 'medical-dashboard.water',
-    color: 'secondary',
-    Icon: WaterBalanceIcon,
+    Icon: P2Icon,
   },
 ];
