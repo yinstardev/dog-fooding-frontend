@@ -21,6 +21,7 @@ import { TseWrapper } from '@app/components/tse-dashboard/TseWrapper';
 import Base from 'antd/lib/typography/Base';
 import { FilterIcon } from '@app/components/common/icons/FilterIcon';
 import { Btn } from '@app/components/header/components/HeaderSearch/HeaderSearch.styles';
+import { fetchUserAndToken } from '@app/api/getUserAndToken';
 
 function SuperSelect({
   columnName,
@@ -215,10 +216,7 @@ async function searchData({ query, columnName }: SearchDataParam): Promise<[stri
 
   const url = 'https://champagne.thoughtspotstaging.cloud/api/rest/2.0/searchdata';
 
-  const [token, tokenError] = await getFullAccessToken();
-  if (tokenError) {
-    return [result, tokenError];
-  }
+  const { token } = await fetchUserAndToken();
 
   const headers = {
     Authorization: 'Bearer ' + token,
