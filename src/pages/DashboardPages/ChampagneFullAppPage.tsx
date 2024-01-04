@@ -17,15 +17,15 @@ import { useResponsive } from '@app/hooks/useResponsive';
 import * as S from './DashboardPage.styles';
 import { BaseRow } from '@app/components/common/BaseRow/BaseRow';
 import { BaseCol } from '@app/components/common/BaseCol/BaseCol';
-import { TseVizCard } from '@app/components/tse-dashboard/home-page-liveboard-one';
-import { TseLibTwo } from '@app/components/tse-dashboard/tse-lib-two/TseLibTwo';
 import { AppEmbed, useEmbedRef } from '@thoughtspot/visual-embed-sdk/lib/src/react';
 import { useAppSelector } from '@app/hooks/reduxHooks';
-import { TseStatisticsCards } from '@app/components/medical-dashboard/statisticsCards/TseStatisticsCards';
+
 import { DashboardCard } from '@app/components/medical-dashboard/DashboardCard/DashboardCard';
 import Base from 'antd/lib/typography/Base';
 
 import './dashboard.css';
+import { themeObject } from '@app/styles/themes/themeVariables';
+import { TseWrapper } from '@app/components/tse-dashboard/TseWrapper';
 
 export const ChampagneFullAppPage: React.FC = () => {
   const { isTablet, isDesktop } = useResponsive();
@@ -49,29 +49,48 @@ export const ChampagneFullAppPage: React.FC = () => {
   const desktopLayout = (
     <BaseRow>
       <BaseCol xl={24} lg={24}>
-        <DashboardCard title="Support Central">
+        <DashboardCard title="Champagne">
           <BaseCol xl={24} lg={24}>
-            Filters
-          </BaseCol>
-
-          <BaseCol xl={24} lg={24}>
-            <AppEmbed
-              ref={ref as any}
-              className="champagne-full-app-embed"
-              preRenderId="champagne-full-app-embed"
-              customizations={{
-                style: {
-                  customCSS: {
-                    variables: { '--ts-var-viz-background': theme === 'dark' ? '#000000' : '#ffffff' },
-                    rules_UNSTABLE: {
-                      '.bk-powered-footer': {
-                        display: 'none',
+            <TseWrapper>
+              <AppEmbed
+                showPrimaryNavbar={true}
+                ref={ref as any}
+                className="champagne-full-app-embed"
+                preRenderId="champagne-full-app-embed"
+                customizations={{
+                  style: {
+                    customCSS: {
+                      variables: {
+                        '--ts-var-application-color': themeObject[theme].background,
+                        '--ts-var-root-background': themeObject[theme].background,
+                        '--ts-var-nav-background': themeObject[theme].siderBackground,
+                        '--ts-var-root-color': themeObject[theme].textMain,
+                      },
+                      rules_UNSTABLE: {
+                        '.bk-powered-footer': {
+                          display: 'none',
+                        },
+                        '.home-container-module__homepageCarouselContainer': {
+                          'background-color': themeObject[theme].siderBackground,
+                          color: themeObject[theme].textSiderPrimary,
+                        },
+                        '.home-trending-module__rightPanelWrapper': {
+                          'background-color': themeObject[theme].siderBackground,
+                          color: themeObject[theme].textSiderPrimary,
+                        },
+                        '.bk-powered-by-ts-ribbon': {
+                          'background-color': themeObject[theme].siderBackground,
+                          color: themeObject[theme].textSiderPrimary,
+                        },
+                        '.bk-column-title-text': {
+                          color: themeObject[theme].textSiderPrimary,
+                        },
                       },
                     },
                   },
-                },
-              }}
-            />
+                }}
+              />
+            </TseWrapper>
           </BaseCol>
         </DashboardCard>
       </BaseCol>

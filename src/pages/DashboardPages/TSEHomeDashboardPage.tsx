@@ -23,6 +23,7 @@ import { LiveboardEmbed } from '@thoughtspot/visual-embed-sdk/lib/src/react';
 import { useAppSelector } from '@app/hooks/reduxHooks';
 import { TseStatisticsCards } from '@app/components/medical-dashboard/statisticsCards/TseStatisticsCards';
 import { themeObject } from '@app/styles/themes/themeVariables';
+import { TseWrapper } from '@app/components/tse-dashboard/TseWrapper';
 
 const TSEHomeDashboardPage: React.FC = () => {
   const { isTablet, isDesktop } = useResponsive();
@@ -52,33 +53,35 @@ const TSEHomeDashboardPage: React.FC = () => {
       </S.LeftSideCol>
 
       <S.RightSideCol xl={10} xxl={7}>
-        <LiveboardEmbed
-          liveboardId="68dcf3ec-8e9c-491f-8e2c-090bfd81aa73"
-          visibleVizs={[
-            '2db035d6-7a4f-4f13-a268-6e434aa8de07',
-            '68abaa19-d461-45c7-84f2-fae78d559699',
+        <TseWrapper>
+          <LiveboardEmbed
+            liveboardId="68dcf3ec-8e9c-491f-8e2c-090bfd81aa73"
+            visibleVizs={[
+              '2db035d6-7a4f-4f13-a268-6e434aa8de07',
+              '68abaa19-d461-45c7-84f2-fae78d559699',
 
-            '5de21bc6-018d-47fc-99ff-000b8358723d',
-          ]}
-          activeTabId="48b86b67-7d62-4e86-86b7-707636f53d8f"
-          className="tse-viz-three"
-          hideLiveboardHeader={true}
-          customizations={{
-            style: {
-              customCSS: {
-                variables: {
-                  '--ts-var-application-color': themeObject[theme].background,
-                  '--ts-var-root-background': themeObject[theme].background,
-                },
-                rules_UNSTABLE: {
-                  'body > app-controller > blink-app-page > div > div > div > bk-powered-footer': {
-                    display: 'none',
+              '5de21bc6-018d-47fc-99ff-000b8358723d',
+            ]}
+            activeTabId="48b86b67-7d62-4e86-86b7-707636f53d8f"
+            className="tse-viz-three"
+            hideLiveboardHeader={true}
+            customizations={{
+              style: {
+                customCSS: {
+                  variables: {
+                    '--ts-var-application-color': themeObject[theme].background,
+                    '--ts-var-root-background': themeObject[theme].background,
+                  },
+                  rules_UNSTABLE: {
+                    'body > app-controller > blink-app-page > div > div > div > bk-powered-footer': {
+                      display: 'none',
+                    },
                   },
                 },
               },
-            },
-          }}
-        />
+            }}
+          />
+        </TseWrapper>
       </S.RightSideCol>
     </BaseRow>
   );
