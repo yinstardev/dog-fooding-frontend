@@ -14,7 +14,7 @@ export const StatisticsInfo: React.FC<StatisticsInfoProps> = ({ name, value, pre
   return (
     <BaseSpace direction="vertical" size={6}>
       <S.Title>
-        {name} - {value}
+        {name} - <u>{value}</u>
       </S.Title>
 
       {prevValue && (

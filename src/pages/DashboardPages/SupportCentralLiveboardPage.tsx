@@ -1,32 +1,86 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageTitle } from '@app/components/common/PageTitle/PageTitle';
-import { MapCard } from '@app/components/medical-dashboard/mapCard/MapCard';
-import { ScreeningsCard } from '@app/components/medical-dashboard/screeningsCard/ScreeningsCard/ScreeningsCard';
-import { ActivityCard } from '@app/components/medical-dashboard/activityCard/ActivityCard';
-import { TreatmentCard } from '@app/components/medical-dashboard/treatmentCard/TreatmentCard';
-import { CovidCard } from '@app/components/medical-dashboard/covidCard/CovidCard';
-import { HealthCard } from '@app/components/medical-dashboard/HealthCard/HealthCard';
-import { FavoritesDoctorsCard } from '@app/components/medical-dashboard/favoriteDoctors/FavoriteDoctorsCard/FavoritesDoctorsCard';
-import { PatientResultsCard } from '@app/components/medical-dashboard/PatientResultsCard/PatientResultsCard';
-import { StatisticsCards } from '@app/components/medical-dashboard/statisticsCards/StatisticsCards';
-import { BloodScreeningCard } from '@app/components/medical-dashboard/bloodScreeningCard/BloodScreeningCard/BloodScreeningCard';
-import { NewsCard } from '@app/components/medical-dashboard/NewsCard/NewsCard';
-import { References } from '@app/components/common/References/References';
+
 import { useResponsive } from '@app/hooks/useResponsive';
-import * as S from './DashboardPage.styles';
 import { BaseRow } from '@app/components/common/BaseRow/BaseRow';
 import { BaseCol } from '@app/components/common/BaseCol/BaseCol';
-import { TseVizCard } from '@app/components/tse-dashboard/home-page-liveboard-one';
-import { TseLibTwo } from '@app/components/tse-dashboard/tse-lib-two/TseLibTwo';
-import { Action, LiveboardEmbed, useEmbedRef } from '@thoughtspot/visual-embed-sdk/lib/src/react';
+import { Action, HostEvent, LiveboardEmbed, useEmbedRef } from '@thoughtspot/visual-embed-sdk/lib/src/react';
 import { useAppSelector } from '@app/hooks/reduxHooks';
-import { TseStatisticsCards } from '@app/components/medical-dashboard/statisticsCards/TseStatisticsCards';
 import { DashboardCard } from '@app/components/medical-dashboard/DashboardCard/DashboardCard';
-import Base from 'antd/lib/typography/Base';
 
 import './dashboard.css';
 import { themeObject } from '@app/styles/themes/themeVariables';
+import { BaseModal } from '@app/components/common/BaseModal/BaseModal';
+import { BaseButtonsForm } from '@app/components/common/forms/BaseButtonsForm/BaseButtonsForm';
+import { Select } from 'antd';
+import axios from 'axios';
+import { getFullAccessToken } from '@app/utils/tse.utils';
+import { BaseForm } from '@app/components/common/forms/BaseForm/BaseForm';
+import { TseWrapper } from '@app/components/tse-dashboard/TseWrapper';
+import Base from 'antd/lib/typography/Base';
+import { FilterIcon } from '@app/components/common/icons/FilterIcon';
+import { Btn } from '@app/components/header/components/HeaderSearch/HeaderSearch.styles';
+
+function SuperSelect({
+  columnName,
+  defaultValues,
+  updateValues,
+}: {
+  columnName: string;
+  defaultValues?: string[];
+  updateValues?: (values: string[]) => void;
+}) {
+  const [options, setOptions] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedValues, setSelectedValues] = useState<string[]>(defaultValues || []);
+  const { t } = useTranslation();
+
+  const updateOptions = (data: string[]) => {
+    const allValues = [...new Set([...data, ...options])];
+    setOptions(allValues);
+  };
+
+  useEffect(() => {
+    searchData({ query: 'a', columnName }).then(([data]) => updateOptions(data));
+  }, []);
+
+  return (
+    <BaseButtonsForm.Item
+      name={columnName}
+      label={columnName}
+      rules={[{ required: false, message: t('forms.validationFormLabels.colorError'), type: 'array' }]}
+    >
+      <Select
+        mode="multiple"
+        options={options.map((e) => ({ value: e, label: e }))}
+        onSearch={async (query) => {
+          if (isLoading) return;
+          setIsLoading(true);
+          try {
+            const [values, error] = await searchData({ query, columnName });
+            if (!values || error) {
+              console.error(error);
+              setIsLoading(false);
+              return;
+            }
+            updateOptions(values);
+          } catch (e) {
+            console.error(e);
+          }
+          setIsLoading(false);
+        }}
+        onSelect={(e: any) => {
+          const newValues = [...selectedValues, e];
+          updateValues?.(newValues);
+          setSelectedValues(newValues);
+        }}
+        value={selectedValues}
+        loading={isLoading}
+      />
+    </BaseButtonsForm.Item>
+  );
+}
 
 export const SupportCentralLiveboardPage: React.FC = () => {
   const { isTablet, isDesktop } = useResponsive();
@@ -51,36 +105,85 @@ export const SupportCentralLiveboardPage: React.FC = () => {
 
   const embedRef = useEmbedRef();
 
+  const [isBasicModalOpen, setIsBasicModalOpen] = useState(false);
+
+  const [accountNames, setAccountNames] = useState<string[]>([]);
+  const [caseNumbers, setCaseNumbers] = useState<string[]>([]);
+
+  const [editAccountNames, setEditAccountNames] = useState<string[]>([]);
+  const [editCaseNumbers, setEditCaseNumbers] = useState<string[]>([]);
+
+  const CardHeader = () => {
+    return (
+      <BaseRow>
+        <BaseCol lg={4}>Support Central</BaseCol>
+        <BaseCol>
+          <Btn icon={<FilterIcon />} onClick={() => setIsBasicModalOpen(!isBasicModalOpen)} size="small" />
+        </BaseCol>
+      </BaseRow>
+    );
+  };
+
   const desktopLayout = (
     <BaseRow>
       <BaseCol xl={24} lg={24}>
-        <DashboardCard title="Support Central">
-          <BaseCol xl={24} lg={24}>
-            Filters
-          </BaseCol>
+        <DashboardCard title={<CardHeader />}>
+          <BaseModal
+            title={'Filter'}
+            open={isBasicModalOpen}
+            onOk={() => {
+              setAccountNames(editAccountNames);
+              setCaseNumbers(editCaseNumbers);
+              setIsBasicModalOpen(false);
+              if (embedRef.current) {
+                embedRef.current.trigger(HostEvent.UpdateRuntimeFilters, [
+                  {
+                    columnName: 'Account Name',
+                    operator: 'EQ',
+                    values: editAccountNames,
+                  },
+                  {
+                    columnName: 'Case Number',
+                    operator: 'EQ',
+                    values: editCaseNumbers,
+                  },
+                ]);
+              }
+            }}
+            onCancel={() => setIsBasicModalOpen(false)}
+          >
+            <BaseForm>
+              <SuperSelect columnName="Account Name" defaultValues={accountNames} updateValues={setEditAccountNames} />
+              <SuperSelect columnName="Case Number" defaultValues={caseNumbers} updateValues={setEditCaseNumbers} />
+            </BaseForm>
+          </BaseModal>
 
           <BaseCol xl={24} lg={24}>
-            <LiveboardEmbed
-              ref={embedRef as any}
-              className="support-central-liveboard-embed"
-              liveboardId="68dcf3ec-8e9c-491f-8e2c-090bfd81aa73"
-              hiddenActions={[Action.AddToFavorites, Action.Edit]}
-              visibleTabs={showTabs}
-              customizations={{
-                style: {
-                  customCSS: {
-                    variables: {
-                      '--ts-var-viz-background': themeObject[theme].background,
-                    },
-                    rules_UNSTABLE: {
-                      'body > app-controller > blink-app-page > div > div > div > bk-powered-footer': {
-                        display: 'none',
+            <TseWrapper>
+              <LiveboardEmbed
+                ref={embedRef as any}
+                className="support-central-liveboard-embed"
+                liveboardId="68dcf3ec-8e9c-491f-8e2c-090bfd81aa73"
+                hiddenActions={[Action.AddToFavorites, Action.Edit]}
+                visibleTabs={showTabs}
+                customizations={{
+                  style: {
+                    customCSS: {
+                      variables: {
+                        '--ts-var-application-color': themeObject[theme].background,
+                        '--ts-var-root-background': themeObject[theme].background,
+                        '--ts-var-nav-background': themeObject[theme].siderBackground,
+                      },
+                      rules_UNSTABLE: {
+                        'body > app-controller > blink-app-page > div > div > div > bk-powered-footer': {
+                          display: 'none',
+                        },
                       },
                     },
                   },
-                },
-              }}
-            />
+                }}
+              />
+            </TseWrapper>
           </BaseCol>
         </DashboardCard>
       </BaseCol>
@@ -94,3 +197,53 @@ export const SupportCentralLiveboardPage: React.FC = () => {
     </>
   );
 };
+
+interface SearchDataParam {
+  query: string;
+  columnName: string;
+}
+
+const cachedData: { [key: string]: { data: string[] } } = {};
+
+async function searchData({ query, columnName }: SearchDataParam): Promise<[string[], any]> {
+  let result: string[] = [];
+  let error = null;
+
+  if (cachedData[columnName + query]?.data !== undefined) {
+    return [cachedData[columnName + query].data, error];
+  }
+
+  const url = 'https://champagne.thoughtspotstaging.cloud/api/rest/2.0/searchdata';
+
+  const [token, tokenError] = await getFullAccessToken();
+  if (tokenError) {
+    return [result, tokenError];
+  }
+
+  const headers = {
+    Authorization: 'Bearer ' + token,
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+  };
+
+  const data = {
+    query_string: `[${columnName}] CONTAINS '${query}'`,
+    logical_table_identifier: '54beb173-d755-42e0-8f73-4d4ec768114f',
+    data_format: 'COMPACT',
+    record_offset: 0,
+    record_size: 500,
+  };
+
+  try {
+    const response = await axios.post(url, data, { headers });
+    result = response.data.contents[0].data_rows.map((e: any) => e[0]);
+
+    cachedData[columnName + query] = {
+      data: result,
+    };
+  } catch (e) {
+    error = e;
+  }
+
+  return [result, error];
+}
