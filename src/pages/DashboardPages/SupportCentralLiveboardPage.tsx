@@ -181,7 +181,11 @@ export const SupportCentralLiveboardPage: React.FC = () => {
             onCancel={() => setIsBasicModalOpen(false)}
           >
             <BaseForm>
-              <SuperSelect columnName="Account Name" defaultValues={editAccountNames} updateValues={setEditAccountNames} />
+              <SuperSelect
+                columnName="Account Name"
+                defaultValues={editAccountNames}
+                updateValues={setEditAccountNames}
+              />
               <SuperSelect columnName="Case Number" defaultValues={editCaseNumbers} updateValues={setEditCaseNumbers} />
             </BaseForm>
           </BaseModal>

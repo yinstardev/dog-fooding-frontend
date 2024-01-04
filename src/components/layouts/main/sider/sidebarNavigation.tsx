@@ -26,20 +26,17 @@ export const sidebarNavigation: SidebarNavigationItem[] = [
     key: 'home-page',
     // TODO use path variable
     url: '/',
-    icon: <NftIcon />,
   },
   {
     title: 'Support Central',
     key: 'support-central',
     // TODO use path variable
     url: '/support-central',
-    icon: <NftIcon />,
   },
   {
     title: 'Champagne',
     key: 'champagne',
     // TODO use path variable
     url: '/champagne',
-    icon: <NftIcon />,
   },
 ];
