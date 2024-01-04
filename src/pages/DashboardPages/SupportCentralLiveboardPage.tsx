@@ -41,10 +41,16 @@ function SuperSelect({
     const allValues = [...new Set([...data, ...options])];
     setOptions(allValues);
   };
+  const handleDeselect = (deselectedValue: any) => {
+    const newValues = selectedValues.filter((value) => value !== deselectedValue);
+    setSelectedValues(newValues);
+    updateValues?.(newValues);
+  };
 
   useEffect(() => {
-    searchData({ query: 'a', columnName }).then(([data]) => updateOptions(data));
-  }, []);
+    setSelectedValues(defaultValues || []);
+    searchData({ query: '', columnName }).then(([data]) => updateOptions(data));
+  }, [defaultValues, columnName]);
 
   return (
     <BaseButtonsForm.Item
@@ -76,6 +82,7 @@ function SuperSelect({
           updateValues?.(newValues);
           setSelectedValues(newValues);
         }}
+        onDeselect={handleDeselect}
         value={selectedValues}
         loading={isLoading}
       />
@@ -137,25 +144,45 @@ export const SupportCentralLiveboardPage: React.FC = () => {
               setCaseNumbers(editCaseNumbers);
               setIsBasicModalOpen(false);
               if (embedRef.current) {
-                embedRef.current.trigger(HostEvent.UpdateRuntimeFilters, [
-                  {
-                    columnName: 'Account Name',
-                    operator: 'EQ',
-                    values: editAccountNames,
-                  },
-                  {
-                    columnName: 'Case Number',
-                    operator: 'EQ',
-                    values: editCaseNumbers,
-                  },
-                ]);
+                if (editAccountNames.length == 0 && editCaseNumbers.length > 0) {
+                  embedRef.current.trigger(HostEvent.UpdateRuntimeFilters, [
+                    {
+                      columnName: 'Case Number',
+                      operator: 'EQ',
+                      values: editCaseNumbers,
+                    },
+                  ]);
+                } else if (editAccountNames.length > 0 && editCaseNumbers.length == 0) {
+                  embedRef.current.trigger(HostEvent.UpdateRuntimeFilters, [
+                    {
+                      columnName: 'Account Name',
+                      operator: 'NEQ',
+                      values: editAccountNames,
+                    },
+                  ]);
+                } else if (editAccountNames.length > 0 && editCaseNumbers.length > 0) {
+                  embedRef.current.trigger(HostEvent.UpdateRuntimeFilters, [
+                    {
+                      columnName: 'Case Number',
+                      operator: 'EQ',
+                      values: editCaseNumbers,
+                    },
+                    {
+                      columnName: 'Account Name',
+                      operator: 'EQ',
+                      values: editAccountNames,
+                    },
+                  ]);
+                } else {
+                  embedRef.current.trigger(HostEvent.UpdateRuntimeFilters, []);
+                }
               }
             }}
             onCancel={() => setIsBasicModalOpen(false)}
           >
             <BaseForm>
-              <SuperSelect columnName="Account Name" defaultValues={accountNames} updateValues={setEditAccountNames} />
-              <SuperSelect columnName="Case Number" defaultValues={caseNumbers} updateValues={setEditCaseNumbers} />
+              <SuperSelect columnName="Account Name" defaultValues={editAccountNames} updateValues={setEditAccountNames} />
+              <SuperSelect columnName="Case Number" defaultValues={editCaseNumbers} updateValues={setEditCaseNumbers} />
             </BaseForm>
           </BaseModal>
 
@@ -232,8 +259,21 @@ async function searchData({ query, columnName }: SearchDataParam): Promise<[stri
     record_size: 500,
   };
 
+  const defaultData = {
+    query_string: `[${columnName}]`,
+    logical_table_identifier: '54beb173-d755-42e0-8f73-4d4ec768114f',
+    data_format: 'COMPACT',
+    record_offset: 0,
+    record_size: 500,
+  };
+
   try {
-    const response = await axios.post(url, data, { headers });
+    let response;
+    if (query.length > 0) {
+      response = await axios.post(url, data, { headers });
+    } else {
+      response = await axios.post(url, defaultData, { headers });
+    }
     result = response.data.contents[0].data_rows.map((e: any) => e[0]);
 
     cachedData[columnName + query] = {
