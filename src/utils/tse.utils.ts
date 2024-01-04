@@ -1,8 +1,8 @@
-import { SECRET_KEY } from '@app/environment';
+import { SECRET_KEY, USERNAME } from '@app/environment';
 
 const url = 'https://champagne.thoughtspotstaging.cloud/callosum/v1/tspublic/v1/session/auth/token';
 const secretKey = SECRET_KEY;
-const username = 'justin.mathew@thoughtspot.com';
+const username = USERNAME;
 const accessLevel = 'FULL';
 
 const headers = {
