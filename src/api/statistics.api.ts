@@ -28,6 +28,5 @@ export const getStatistics = async (): Promise<Statistic[]> => {
     } satisfies Statistic;
   });
 
-
   return data;
 };
