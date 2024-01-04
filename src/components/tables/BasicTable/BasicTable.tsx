@@ -106,7 +106,12 @@ export const BasicTable: React.FC = () => {
           ],
         },
       ],
-      onFilter: (value: string | number | boolean, record: BasicTableRow) => record.name.includes(value.toString()),
+      onFilter: (value: boolean | React.Key, record: BasicTableRow) => {
+        if (typeof value === 'string') {
+          return record.name.includes(value);
+        }
+        return false; // Or handle other types as needed
+      },
     },
     {
       title: t('common.age'),

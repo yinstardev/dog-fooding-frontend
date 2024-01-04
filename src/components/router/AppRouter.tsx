@@ -12,13 +12,14 @@ import LockPage from '@app/pages/LockPage';
 
 import MainLayout from '@app/components/layouts/main/MainLayout/MainLayout';
 import ProfileLayout from '@app/components/profile/ProfileLayout';
-import RequireAuth from '@app/components/router/RequireAuth';
+import {ProtectedRoute} from '@app/components/router/RequireAuth';
 import { withLoading } from '@app/hocs/withLoading.hoc';
 import NftDashboardPage from '@app/pages/DashboardPages/NftDashboardPage';
 import MedicalDashboardPage from '@app/pages/DashboardPages/MedicalDashboardPage';
 import TSEHomeDashboardPage from '@app/pages/DashboardPages/TSEHomeDashboardPage';
 import { SupportCentralLiveboardPage } from '@app/pages/DashboardPages/SupportCentralLiveboardPage';
 import { ChampagneFullAppPage } from '@app/pages/DashboardPages/ChampagneFullAppPage';
+import TokenHandler from './TokenHandler';
 
 const NewsFeedPage = React.lazy(() => import('@app/pages/NewsFeedPage'));
 const DataTablesPage = React.lazy(() => import('@app/pages/DataTablesPage'));
@@ -131,14 +132,15 @@ const LogoutFallback = withLoading(Logout);
 
 export const AppRouter: React.FC = () => {
   const protectedLayout = (
-    <RequireAuth>
+    <ProtectedRoute>
       <MainLayout />
-    </RequireAuth>
+    </ProtectedRoute>
   );
 
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/token-handler" element={<TokenHandler />} />
         <Route path={TSE_HOME_PAGE_PATH} element={protectedLayout}>
           <Route index element={<TseHomeDashboard />} />
           <Route path={SUPPORT_CENTRAL_LIVEBOARD_PATH} element={<SupportCentralLiveboard />} />
@@ -204,9 +206,9 @@ export const AppRouter: React.FC = () => {
           <Route
             path="lock"
             element={
-              <RequireAuth>
+              <ProtectedRoute>
                 <LockPage />
-              </RequireAuth>
+              </ProtectedRoute>
             }
           />
           <Route path="forgot-password" element={<ForgotPasswordPage />} />
