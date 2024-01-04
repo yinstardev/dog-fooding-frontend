@@ -27,11 +27,6 @@ export const notifications = [
   },
   {
     id: 4,
-    description: 'header.notifications.mention',
-    userName: 'Steve Manson',
-    userIcon:
-      'https://res.cloudinary.com/lapkinthegod/image/upload/v1629187274/young-male-doctor-white-uniform_x7dcrs.jpg',
-    place: 'medical-dashboard.latestScreenings.title',
-    href: `/#latest-screenings`,
+    description: 'Welcome to TSE Dogfooding App',
   },
 ];
