@@ -1,3 +1,4 @@
+import { fetchUserAndToken } from '@app/api/getUserAndToken';
 import { SECRET_KEY, USERNAME } from '@app/environment';
 
 const url = 'https://champagne.thoughtspotstaging.cloud/callosum/v1/tspublic/v1/session/auth/token';
@@ -53,9 +54,7 @@ export const getLiveboardData = async ({
   let data: LiveboardData | null = null;
   let error = null;
 
-  const [token, tokenError] = await getFullAccessToken();
-
-  if (tokenError) return [null, tokenError];
+  const { token } = await fetchUserAndToken();
 
   try {
     const res = await fetch('https://champagne.thoughtspotstaging.cloud/api/rest/2.0/metadata/liveboard/data', {
