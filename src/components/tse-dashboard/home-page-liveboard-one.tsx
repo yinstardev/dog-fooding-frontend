@@ -14,7 +14,6 @@ init({
 
 export const TseVizCard: React.FC = () => {
   const theme = useAppSelector((state) => state.theme.theme);
-  console.log(theme);
 
   return (
     <DashboardCard padding={0}>
