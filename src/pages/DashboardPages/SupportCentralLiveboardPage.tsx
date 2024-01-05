@@ -196,7 +196,13 @@ export const SupportCentralLiveboardPage: React.FC = () => {
                 ref={embedRef as any}
                 className="support-central-liveboard-embed"
                 liveboardId="68dcf3ec-8e9c-491f-8e2c-090bfd81aa73"
-                hiddenActions={[Action.AddToFavorites, Action.Edit, Action.SyncToOtherApps, Action.SyncToSheets, Action.ManagePipelines]}
+                hiddenActions={[
+                  Action.AddToFavorites,
+                  Action.Edit,
+                  Action.SyncToOtherApps,
+                  Action.SyncToSheets,
+                  Action.ManagePipelines,
+                ]}
                 disabledActions={[
                   Action.DownloadAsPdf,
                   Action.ExportTML,
