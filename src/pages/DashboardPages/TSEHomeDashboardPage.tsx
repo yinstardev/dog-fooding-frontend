@@ -134,7 +134,7 @@ const TSEHomeDashboardPage: React.FC = () => {
 
   return (
     <>
-      <PageTitle>{t('common.medical-dashboard')}</PageTitle>
+      <PageTitle>{t('common.home')}</PageTitle>
       {isDesktop ? desktopLayout : mobileAndTabletLayout}
     </>
   );

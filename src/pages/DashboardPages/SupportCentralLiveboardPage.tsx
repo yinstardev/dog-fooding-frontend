@@ -237,7 +237,7 @@ export const SupportCentralLiveboardPage: React.FC = () => {
 
   return (
     <>
-      <PageTitle>{t('common.medical-dashboard')}</PageTitle>
+      <PageTitle>{t('common.support-central')}</PageTitle>
       {isDesktop ? desktopLayout : desktopLayout}
     </>
   );
