@@ -99,7 +99,7 @@ export const ChampagneFullAppPage: React.FC = () => {
 
   return (
     <>
-      <PageTitle>{t('common.medical-dashboard')}</PageTitle>
+      <PageTitle>{t('common.full-app-embed')}</PageTitle>
       {isDesktop ? desktopLayout : desktopLayout}
     </>
   );
