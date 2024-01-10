@@ -14,8 +14,6 @@ import MainLayout from '@app/components/layouts/main/MainLayout/MainLayout';
 import ProfileLayout from '@app/components/profile/ProfileLayout';
 import { ProtectedRoute } from '@app/components/router/RequireAuth';
 import { withLoading } from '@app/hocs/withLoading.hoc';
-import NftDashboardPage from '@app/pages/DashboardPages/NftDashboardPage';
-import MedicalDashboardPage from '@app/pages/DashboardPages/MedicalDashboardPage';
 import TSEHomeDashboardPage from '@app/pages/DashboardPages/TSEHomeDashboardPage';
 import { SupportCentralLiveboardPage } from '@app/pages/DashboardPages/SupportCentralLiveboardPage';
 import { ChampagneFullAppPage } from '@app/pages/DashboardPages/ChampagneFullAppPage';
@@ -64,9 +62,7 @@ const ReactSimpleMaps = React.lazy(() => import('@app/pages/maps/ReactSimpleMaps
 const PigeonsMaps = React.lazy(() => import('@app/pages/maps/PigeonsMapsPage/PigeonsMapsPage'));
 const Logout = React.lazy(() => import('./Logout'));
 
-export const NFT_DASHBOARD_PATH = '/nft';
 export const TSE_HOME_PAGE_PATH = '/';
-export const MEDICAL_DASHBOARD_PATH = '/medical-dashboard';
 export const SUPPORT_CENTRAL_LIVEBOARD_PATH = '/support-central';
 export const CHAMPAGNE_FULL_APP_PATH = '/champagne';
 
@@ -75,8 +71,6 @@ const TseHomeDashboard = withLoading(TSEHomeDashboardPage);
 const SupportCentralLiveboard = withLoading(SupportCentralLiveboardPage);
 const ChampagneFullApp = withLoading(ChampagneFullAppPage);
 
-const MedicalDashboard = withLoading(MedicalDashboardPage);
-const NftDashboard = withLoading(NftDashboardPage);
 const NewsFeed = withLoading(NewsFeedPage);
 const AdvancedForm = withLoading(AdvancedFormsPage);
 
@@ -146,8 +140,6 @@ export const AppRouter: React.FC = () => {
           <Route path={SUPPORT_CENTRAL_LIVEBOARD_PATH} element={<SupportCentralLiveboard />} />
           <Route path={CHAMPAGNE_FULL_APP_PATH} element={<ChampagneFullApp />} />
 
-          <Route path={MEDICAL_DASHBOARD_PATH} element={<MedicalDashboard />} />
-          <Route path={NFT_DASHBOARD_PATH} element={<NftDashboard />} />
           <Route path="apps">
             <Route path="feed" element={<NewsFeed />} />
           </Route>
