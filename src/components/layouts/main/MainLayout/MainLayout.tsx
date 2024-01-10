@@ -18,9 +18,7 @@ const MainLayout: React.FC = () => {
   const toggleSider = () => setSiderCollapsed(!siderCollapsed);
 
   useEffect(() => {
-    setIsTwoColumnsLayout(
-      [TSE_HOME_PAGE_PATH].includes(location.pathname) && isDesktop,
-    );
+    setIsTwoColumnsLayout([TSE_HOME_PAGE_PATH].includes(location.pathname) && isDesktop);
   }, [location.pathname, isDesktop]);
 
   return (
