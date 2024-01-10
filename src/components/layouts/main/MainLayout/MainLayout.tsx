@@ -5,7 +5,7 @@ import MainContent from '../MainContent/MainContent';
 import { MainHeader } from '../MainHeader/MainHeader';
 import * as S from './MainLayout.styles';
 import { Outlet, useLocation } from 'react-router-dom';
-import { MEDICAL_DASHBOARD_PATH, NFT_DASHBOARD_PATH, TSE_HOME_PAGE_PATH } from '@app/components/router/AppRouter';
+import { TSE_HOME_PAGE_PATH } from '@app/components/router/AppRouter';
 import { useResponsive } from '@app/hooks/useResponsive';
 import { References } from '@app/components/common/References/References';
 
@@ -19,7 +19,7 @@ const MainLayout: React.FC = () => {
 
   useEffect(() => {
     setIsTwoColumnsLayout(
-      [MEDICAL_DASHBOARD_PATH, NFT_DASHBOARD_PATH, TSE_HOME_PAGE_PATH].includes(location.pathname) && isDesktop,
+      [TSE_HOME_PAGE_PATH].includes(location.pathname) && isDesktop,
     );
   }, [location.pathname, isDesktop]);
 
