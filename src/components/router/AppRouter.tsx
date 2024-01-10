@@ -19,7 +19,6 @@ import { SupportCentralLiveboardPage } from '@app/pages/DashboardPages/SupportCe
 import { ChampagneFullAppPage } from '@app/pages/DashboardPages/ChampagneFullAppPage';
 import TokenHandler from './TokenHandler';
 
-const NewsFeedPage = React.lazy(() => import('@app/pages/NewsFeedPage'));
 const DataTablesPage = React.lazy(() => import('@app/pages/DataTablesPage'));
 const ChartsPage = React.lazy(() => import('@app/pages/ChartsPage'));
 const ServerErrorPage = React.lazy(() => import('@app/pages/ServerErrorPage'));
@@ -71,7 +70,6 @@ const TseHomeDashboard = withLoading(TSEHomeDashboardPage);
 const SupportCentralLiveboard = withLoading(SupportCentralLiveboardPage);
 const ChampagneFullApp = withLoading(ChampagneFullAppPage);
 
-const NewsFeed = withLoading(NewsFeedPage);
 const AdvancedForm = withLoading(AdvancedFormsPage);
 
 // UI Components
@@ -140,9 +138,6 @@ export const AppRouter: React.FC = () => {
           <Route path={SUPPORT_CENTRAL_LIVEBOARD_PATH} element={<SupportCentralLiveboard />} />
           <Route path={CHAMPAGNE_FULL_APP_PATH} element={<ChampagneFullApp />} />
 
-          <Route path="apps">
-            <Route path="feed" element={<NewsFeed />} />
-          </Route>
           <Route path="forms">
             <Route path="advanced-forms" element={<AdvancedForm />} />
           </Route>
