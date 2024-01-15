@@ -27,7 +27,7 @@ export const fetchUserAndToken = async () => {
 
     if (payload) {
       username = payload.username;
-    //   username = `${process.env.REACT_APP_USERNAME}`;
+      //   username = `${process.env.REACT_APP_USERNAME}`;
     }
     const tokenResponse = await axios.post(
       `${be_url}/getauthtoken`,
