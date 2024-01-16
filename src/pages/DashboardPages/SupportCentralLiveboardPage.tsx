@@ -22,6 +22,7 @@ import Base from 'antd/lib/typography/Base';
 import { FilterIcon } from '@app/components/common/icons/FilterIcon';
 import { Btn } from '@app/components/header/components/HeaderSearch/HeaderSearch.styles';
 import { fetchUserAndToken } from '@app/api/getUserAndToken';
+import JiraIssueModal from '@app/components/common/Modal/JiraIssueModal';
 
 function SuperSelect({
   columnName,
@@ -114,12 +115,42 @@ export const SupportCentralLiveboardPage: React.FC = () => {
   const embedRef = useEmbedRef();
 
   const [isBasicModalOpen, setIsBasicModalOpen] = useState(false);
+  const [jiraIssueId, setJiraIssueId] = useState('');
+  const [jiraIssueData, setJiraIssueData] = useState(null);
+  const [isJiraModalOpen, setIsJiraModalOpen] = useState(false);
 
   const [accountNames, setAccountNames] = useState<string[]>([]);
   const [caseNumbers, setCaseNumbers] = useState<string[]>([]);
 
   const [editAccountNames, setEditAccountNames] = useState<string[]>([]);
   const [editCaseNumbers, setEditCaseNumbers] = useState<string[]>([]);
+
+  const handleJiraIssueIdChange = (event: any) => {
+    setJiraIssueId(event.target.value);
+  };
+  const fetchJiraIssueData = async () => {
+    const jiraBaseUrl = process.env.REACT_APP_JIRA_BASE_URL;
+    const jiraToken = btoa(`${process.env.REACT_APP_JIRA_USERNAME}:${process.env.REACT_APP_JIRA_API_TOKEN}`);
+  
+    try {
+      const response = await axios.get(
+        `${jiraBaseUrl}/rest/api/3/issue/${jiraIssueId}`,
+        {
+          headers: {
+            'Authorization': `Basic ${jiraToken}`,
+            'Accept': 'application/json'
+          }
+        }
+      );
+  
+      if (response.data) {
+        setJiraIssueData(response.data);
+        setIsJiraModalOpen(true);
+      }
+    } catch (error) {
+      console.error('Error fetching JIRA issue:', error);
+    }
+  };
 
   const CardHeader = () => {
     return (
@@ -156,7 +187,7 @@ export const SupportCentralLiveboardPage: React.FC = () => {
                   embedRef.current.trigger(HostEvent.UpdateRuntimeFilters, [
                     {
                       columnName: 'Account Name',
-                      operator: 'NEQ',
+                      operator: 'EQ',
                       values: editAccountNames,
                     },
                   ]);
@@ -238,6 +269,21 @@ export const SupportCentralLiveboardPage: React.FC = () => {
   return (
     <>
       <PageTitle>{t('common.support-central')}</PageTitle>
+      <div>
+        <input
+          type="text"
+          value={jiraIssueId}
+          onChange={(e) => setJiraIssueId(e.target.value)}
+          placeholder="Enter JIRA Issue ID"
+        />
+        <button onClick={fetchJiraIssueData}>Fetch JIRA Issue</button>
+      </div>
+      {isJiraModalOpen && (
+        <JiraIssueModal
+          issueData={jiraIssueData}
+          onClose={() => setIsJiraModalOpen(false)}
+        />
+      )}
       {isDesktop ? desktopLayout : desktopLayout}
     </>
   );
