@@ -24,11 +24,11 @@ export const NightModeSettings: React.FC = () => {
 
   return (
     <>
-      <SwitchContainer>
+      {/* <SwitchContainer>
         <span>{t('common.auto')}</span>
         <BaseSwitch checkedChildren="On" unCheckedChildren="Off" checked={isNightMode} onChange={handleChange} />
-      </SwitchContainer>
-      {isNightMode && <NightTimePicker nightTime={nightTime} setNightTime={handleNightTime} />}
+      </SwitchContainer> */}
+      {/* {isNightMode && <NightTimePicker nightTime={nightTime} setNightTime={handleNightTime} />} */}
     </>
   );
 };
