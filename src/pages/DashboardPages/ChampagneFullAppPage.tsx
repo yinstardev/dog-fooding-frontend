@@ -61,9 +61,9 @@ export const ChampagneFullAppPage: React.FC = () => {
                   style: {
                     customCSS: {
                       variables: {
-                        '--ts-var-application-color': themeObject[theme].background,
+                        '--ts-var-application-color': '#000000',
                         '--ts-var-root-background': themeObject[theme].background,
-                        '--ts-var-nav-background': themeObject[theme].siderBackground,
+                        '--ts-var-nav-background': '#295ce1',
                         '--ts-var-root-color': themeObject[theme].textDark,
                         '--ts-var-menu-color': themeObject[theme].textDark,
                         '--ts-var-search-data-button-background': themeObject[theme].textLight,
@@ -78,7 +78,7 @@ export const ChampagneFullAppPage: React.FC = () => {
                         },
                         '.home-trending-module__rightPanelWrapper': {
                           'background-color': themeObject[theme].siderBackground,
-                          color: themeObject[theme].textSiderPrimary,
+                          color: themeObject[theme].textDark,
                         },
                         '.bk-powered-by-ts-ribbon': {
                           'background-color': themeObject[theme].siderBackground,
