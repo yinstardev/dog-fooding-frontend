@@ -266,7 +266,7 @@ export const SupportCentralLiveboardPage: React.FC = () => {
   return (
     <>
       <PageTitle>{t('common.support-central')}</PageTitle>
-      <div>
+      {/* <div>
         <input
           type="text"
           value={jiraIssueId}
@@ -274,8 +274,8 @@ export const SupportCentralLiveboardPage: React.FC = () => {
           placeholder="Enter JIRA Issue ID"
         />
         <button onClick={fetchJiraIssueData}>Fetch JIRA Issue</button>
-      </div>
-      {isJiraModalOpen && <JiraIssueModal issueData={jiraIssueData} onClose={() => setIsJiraModalOpen(false)} />}
+      </div> */}
+      {/* {isJiraModalOpen && <JiraIssueModal issueData={jiraIssueData} onClose={() => setIsJiraModalOpen(false)} />} */}
       {isDesktop ? desktopLayout : desktopLayout}
     </>
   );
