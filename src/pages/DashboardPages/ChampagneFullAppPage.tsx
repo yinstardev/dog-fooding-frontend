@@ -66,6 +66,7 @@ export const ChampagneFullAppPage: React.FC = () => {
                         '--ts-var-nav-background': themeObject[theme].siderBackground,
                         '--ts-var-root-color': themeObject[theme].textDark,
                         '--ts-var-menu-color':themeObject[theme].textDark,
+                        '--ts-var-search-data-button-background':themeObject[theme].textLight,
                       },
                       rules_UNSTABLE: {
                         '.bk-powered-footer': {
