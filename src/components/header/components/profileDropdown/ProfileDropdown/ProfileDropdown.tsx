@@ -17,12 +17,16 @@ export const ProfileDropdown: React.FC = () => {
   useEffect(() => {
     const getUserEmail = async () => {
       const userData = await fetchUserAndToken();
-      const emailPart = userData.email.split('@')[0]; // Split the email and take the first part
+      let emailPart = userData.email.split('@')[0];
+  
+      emailPart = emailPart.split('.').map((part : any) => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
+  
       setEmailName(emailPart);
     };
-
+  
     getUserEmail();
   }, []);
+  
 
   return emailName && user ? (
     <BasePopover content={<ProfileOverlay />} trigger="click">
