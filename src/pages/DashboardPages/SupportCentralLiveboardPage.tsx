@@ -131,18 +131,15 @@ export const SupportCentralLiveboardPage: React.FC = () => {
   const fetchJiraIssueData = async () => {
     const jiraBaseUrl = process.env.REACT_APP_JIRA_BASE_URL;
     const jiraToken = btoa(`${process.env.REACT_APP_JIRA_USERNAME}:${process.env.REACT_APP_JIRA_API_TOKEN}`);
-  
+
     try {
-      const response = await axios.get(
-        `${jiraBaseUrl}/rest/api/3/issue/${jiraIssueId}`,
-        {
-          headers: {
-            'Authorization': `Basic ${jiraToken}`,
-            'Accept': 'application/json'
-          }
-        }
-      );
-  
+      const response = await axios.get(`${jiraBaseUrl}/rest/api/3/issue/${jiraIssueId}`, {
+        headers: {
+          Authorization: `Basic ${jiraToken}`,
+          Accept: 'application/json',
+        },
+      });
+
       if (response.data) {
         setJiraIssueData(response.data);
         setIsJiraModalOpen(true);
@@ -278,12 +275,7 @@ export const SupportCentralLiveboardPage: React.FC = () => {
         />
         <button onClick={fetchJiraIssueData}>Fetch JIRA Issue</button>
       </div>
-      {isJiraModalOpen && (
-        <JiraIssueModal
-          issueData={jiraIssueData}
-          onClose={() => setIsJiraModalOpen(false)}
-        />
-      )}
+      {isJiraModalOpen && <JiraIssueModal issueData={jiraIssueData} onClose={() => setIsJiraModalOpen(false)} />}
       {isDesktop ? desktopLayout : desktopLayout}
     </>
   );
