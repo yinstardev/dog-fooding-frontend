@@ -2,3 +2,9 @@
 .champagne-full-app-embed {
   min-height: 700px;
 }
+
+.search-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}

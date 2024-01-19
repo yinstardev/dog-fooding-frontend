@@ -155,9 +155,11 @@ export const SupportCentralLiveboardPage: React.FC = () => {
       <BaseRow>
         <BaseCol lg={4}>Support Central</BaseCol>
         <BaseCol>
-          <Btn icon={<FilterIcon />} onClick={() => setIsBasicModalOpen(!isBasicModalOpen)} size="small" />
-          <BaseInput value={jiraIssueId} onChange={(e) => setJiraIssueId(e.target.value)} placeholder="ISSUE ID" />
-          <Btn onClick={fetchJiraIssueData}>Search</Btn>
+          <div className="search-container">
+            <Btn icon={<FilterIcon />} onClick={() => setIsBasicModalOpen(!isBasicModalOpen)} size="small" />
+            <BaseInput value={jiraIssueId} onChange={(e) => setJiraIssueId(e.target.value)} placeholder="ISSUE ID" />
+            <Btn onClick={fetchJiraIssueData}>Search</Btn>
+          </div>
           {isJiraModalOpen && <JiraIssueModal issueData={jiraIssueData} onClose={() => setIsJiraModalOpen(false)} />}
         </BaseCol>
       </BaseRow>
