@@ -23,6 +23,7 @@ import { FilterIcon } from '@app/components/common/icons/FilterIcon';
 import { Btn } from '@app/components/header/components/HeaderSearch/HeaderSearch.styles';
 import { fetchUserAndToken } from '@app/api/getUserAndToken';
 import JiraIssueModal from '@app/components/common/Modal/JiraIssueModal';
+import { BaseInput } from '@app/components/common/inputs/BaseInput/BaseInput';
 
 function SuperSelect({
   columnName,
@@ -155,6 +156,9 @@ export const SupportCentralLiveboardPage: React.FC = () => {
         <BaseCol lg={4}>Support Central</BaseCol>
         <BaseCol>
           <Btn icon={<FilterIcon />} onClick={() => setIsBasicModalOpen(!isBasicModalOpen)} size="small" />
+          <BaseInput value={jiraIssueId} onChange={(e) => setJiraIssueId(e.target.value)} placeholder="ISSUE ID" />
+          <Btn onClick={fetchJiraIssueData}>Search</Btn>
+          {isJiraModalOpen && <JiraIssueModal issueData={jiraIssueData} onClose={() => setIsJiraModalOpen(false)} />}
         </BaseCol>
       </BaseRow>
     );
