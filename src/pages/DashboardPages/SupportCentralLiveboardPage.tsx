@@ -140,7 +140,6 @@ export const SupportCentralLiveboardPage: React.FC = () => {
           Accept: 'application/json',
         },
       });
-
       if (response.data) {
         setJiraIssueData(response.data);
         setIsJiraModalOpen(true);
