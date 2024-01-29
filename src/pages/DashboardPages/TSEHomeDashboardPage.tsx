@@ -55,7 +55,7 @@ const TSEHomeDashboardPage: React.FC = () => {
       <S.RightSideCol xl={10} xxl={7}>
         <TseWrapper>
           <LiveboardEmbed
-            liveboardId="68dcf3ec-8e9c-491f-8e2c-090bfd81aa73"
+            liveboardId="1d8000d8-6225-4202-b56c-786fd73f95ad"
             visibleVizs={[
               '2db035d6-7a4f-4f13-a268-6e434aa8de07',
               '68abaa19-d461-45c7-84f2-fae78d559699',
@@ -86,56 +86,10 @@ const TSEHomeDashboardPage: React.FC = () => {
     </BaseRow>
   );
 
-  const mobileAndTabletLayout = (
-    <BaseRow gutter={[20, 20]}>
-      <StatisticsCards />
-
-      <BaseCol id="map" md={24} order={4}>
-        <TseVizCard />
-      </BaseCol>
-
-      <BaseCol id="latest-screenings" xs={24} md={12} order={(isTablet && 5) || 0}>
-        <TseLibTwo />
-      </BaseCol>
-
-      <BaseCol id="activity" xs={24} md={12} order={(isTablet && 8) || 0}>
-        <ActivityCard />
-      </BaseCol>
-
-      <BaseCol id="treatment-plan" xs={24} md={24} order={(isTablet && 10) || 0}>
-        <TreatmentCard />
-      </BaseCol>
-
-      <BaseCol id="health" xs={24} md={12} order={(isTablet && 9) || 0}>
-        <HealthCard />
-      </BaseCol>
-
-      <BaseCol id="patient-timeline" xs={24} md={12} order={(isTablet && 11) || 0}>
-        <PatientResultsCard />
-      </BaseCol>
-
-      <BaseCol id="blood-screening" xs={24} md={12} order={(isTablet && 6) || 0}>
-        <BloodScreeningCard />
-      </BaseCol>
-
-      <BaseCol id="favorite-doctors" xs={24} md={24} order={(isTablet && 13) || 0}>
-        <FavoritesDoctorsCard />
-      </BaseCol>
-
-      <BaseCol id="covid" xs={24} md={12} order={(isTablet && 12) || 0}>
-        <CovidCard />
-      </BaseCol>
-
-      <BaseCol id="news" xs={24} md={24} order={(isTablet && 14) || 0}>
-        <NewsCard />
-      </BaseCol>
-    </BaseRow>
-  );
-
   return (
     <>
       <PageTitle>{t('common.home')}</PageTitle>
-      {isDesktop ? desktopLayout : mobileAndTabletLayout}
+      {isDesktop ? desktopLayout : desktopLayout}
     </>
   );
 };

@@ -5,7 +5,7 @@ import { PageTitle } from '@app/components/common/PageTitle/PageTitle';
 import { useResponsive } from '@app/hooks/useResponsive';
 import { BaseRow } from '@app/components/common/BaseRow/BaseRow';
 import { BaseCol } from '@app/components/common/BaseCol/BaseCol';
-import { Action, HostEvent, LiveboardEmbed, useEmbedRef } from '@thoughtspot/visual-embed-sdk/lib/src/react';
+import { Action, HostEvent, LiveboardEmbed, RuntimeFilterOp, useEmbedRef } from '@thoughtspot/visual-embed-sdk/lib/src/react';
 import { useAppSelector } from '@app/hooks/reduxHooks';
 import { DashboardCard } from '@app/components/medical-dashboard/DashboardCard/DashboardCard';
 
@@ -15,7 +15,6 @@ import { BaseModal } from '@app/components/common/BaseModal/BaseModal';
 import { BaseButtonsForm } from '@app/components/common/forms/BaseButtonsForm/BaseButtonsForm';
 import { Select } from 'antd';
 import axios from 'axios';
-import { getFullAccessToken } from '@app/utils/tse.utils';
 import { BaseForm } from '@app/components/common/forms/BaseForm/BaseForm';
 import { TseWrapper } from '@app/components/tse-dashboard/TseWrapper';
 import Base from 'antd/lib/typography/Base';
@@ -24,92 +23,115 @@ import { Btn } from '@app/components/header/components/HeaderSearch/HeaderSearch
 import { fetchUserAndToken } from '@app/api/getUserAndToken';
 import JiraIssueModal from '@app/components/common/Modal/JiraIssueModal';
 import { BaseInput } from '@app/components/common/inputs/BaseInput/BaseInput';
+import { getFilterAndTabs, saveFilterAndTabs } from '@app/api/db.api';
+import { OperationType } from '@thoughtspot/visual-embed-sdk/lib/src/utils/graphql/answerService/answerService';
+import { SuperSelect } from './support-central/SuperSelect';
+import { Tab } from './support-central/types';
 
-function SuperSelect({
-  columnName,
-  defaultValues,
-  updateValues,
-}: {
-  columnName: string;
-  defaultValues?: string[];
-  updateValues?: (values: string[]) => void;
-}) {
-  const [options, setOptions] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [selectedValues, setSelectedValues] = useState<string[]>(defaultValues || []);
-  const { t } = useTranslation();
+// interface Tab {
+//   id: string;
+//   name: string;
+// }
 
-  const updateOptions = (data: string[]) => {
-    const allValues = [...new Set([...data, ...options])];
-    setOptions(allValues);
-  };
-  const handleDeselect = (deselectedValue: any) => {
-    const newValues = selectedValues.filter((value) => value !== deselectedValue);
-    setSelectedValues(newValues);
-    updateValues?.(newValues);
-  };
+// interface Filters {
+//   accountNames: string[];
+//   caseNumbers: string[];
+// }
 
-  useEffect(() => {
-    setSelectedValues(defaultValues || []);
-    searchData({ query: '', columnName }).then(([data]) => updateOptions(data));
-  }, [defaultValues, columnName]);
+const staticTabOptions: Tab[] = [
+  { name: "Goals", id: "f897c5de-ee38-46e0-9734-d9ed5d4ecc83" },
+  { name: "Cases", id: "c82cdade-51f8-492e-93ab-9181155bd9aa" },
+  { name: "Customer Case History", id: "8ad26876-752e-4d0d-a763-f4aa98323b6f" },
+  { name: "Clusters", id: "257da5ab-2678-435e-9bfb-711e413502da" },
+  { name: "Red Accounts", id: "bf1d15f4-3690-4b37-8cd1-5f0967cf588c" },
+  { name: "Yellow Accounts", id: "d1a7e93b-21a7-419c-8834-e1760ec1659a" },
+  { name: "NPS", id: "b08310de-a581-401b-bed1-b0416a6e1b58" },
+  { name: "SRE View", id: "0d953678-adf9-4c90-baf1-e861d13cb9e6" },
+  { name: "Production Engineering View", id: "d09ac3fb-00d9-4007-a614-c546183c19a0" },
+  { name: "Engineering View", id: "693df25f-69e3-4c32-9015-9b81c1785736" },
+  { name: "Patch Status", id: "6991021a-c267-4454-8056-989e48d7ced8" }
+];
 
-  return (
-    <BaseButtonsForm.Item
-      name={columnName}
-      label={columnName}
-      rules={[{ required: false, message: t('forms.validationFormLabels.colorError'), type: 'array' }]}
-    >
-      <Select
-        mode="multiple"
-        options={options.map((e) => ({ value: e, label: e }))}
-        onSearch={async (query) => {
-          if (isLoading) return;
-          setIsLoading(true);
-          try {
-            const [values, error] = await searchData({ query, columnName });
-            if (!values || error) {
-              console.error(error);
-              setIsLoading(false);
-              return;
-            }
-            updateOptions(values);
-          } catch (e) {
-            console.error(e);
-          }
-          setIsLoading(false);
-        }}
-        onSelect={(e: any) => {
-          const newValues = [...selectedValues, e];
-          updateValues?.(newValues);
-          setSelectedValues(newValues);
-        }}
-        onDeselect={handleDeselect}
-        value={selectedValues}
-        loading={isLoading}
-      />
-    </BaseButtonsForm.Item>
-  );
-}
+// function SuperSelect({
+//   columnName,
+//   defaultValues,
+//   updateValues,
+// }: {
+//   columnName: string;
+//   defaultValues?: string[];
+//   updateValues?: (values: string[]) => void;
+// }) {
+//   const [options, setOptions] = useState<string[]>([]);
+//   const [isLoading, setIsLoading] = useState(false);
+//   const [selectedValues, setSelectedValues] = useState<string[]>(defaultValues || []);
+//   const { t } = useTranslation();
+
+
+//   const updateOptions = (data: string[]) => {
+//     const allValues = [...new Set([...data, ...options])];
+//     setOptions(allValues);
+//   };
+//   const handleDeselect = (deselectedValue: any) => {
+//     const newValues = selectedValues.filter((value) => value !== deselectedValue);
+//     setSelectedValues(newValues);
+//     updateValues?.(newValues);
+//   };
+//    // debugger;
+//   useEffect(() => {
+//     setSelectedValues(defaultValues || []);
+//     searchData({ query: '', columnName }).then(([data]) => {updateOptions(data);
+//     console.log(data)});
+    
+//     return () => {
+//       console.log("SuperSelect unmounting or updating", defaultValues);
+//   };
+//   }, [defaultValues, columnName]);
+
+//   const test = selectedValues.map(item => ({ value: item, label: item }));
+
+//   return (
+//     <BaseButtonsForm.Item
+//       name={columnName}
+//       label={columnName}
+//       rules={[{ required: false, message: t('forms.validationFormLabels.colorError'), type: 'array' }]}
+//     >
+//       <Select
+//         mode="multiple"
+//         options={options.map((e) => ({ value: e, label: e }))}
+//         onSearch={async (query) => {
+//           if (isLoading) return;
+//           setIsLoading(true);
+//           try {
+//             const [values, error] = await searchData({ query, columnName });
+//             if (!values || error) {
+//               console.error(error);
+//               setIsLoading(false);
+//               return;
+//             }
+//             updateOptions(values);
+//           } catch (e) {
+//             console.error(e);
+//           }
+//           setIsLoading(false);
+//         }}
+//         onSelect={(e: any) => {
+//           const newValues = [...selectedValues, e];
+//           updateValues?.(newValues);
+//           setSelectedValues(newValues);
+//         }}
+//         onDeselect={handleDeselect}
+//         value={test}
+//         defaultValue={test}
+//         loading={isLoading}
+//       />
+//     </BaseButtonsForm.Item>
+//   );
+// }
 
 export const SupportCentralLiveboardPage: React.FC = () => {
   const { isTablet, isDesktop } = useResponsive();
 
   const { t } = useTranslation();
-
-  const showTabs = [
-    '765995db-647c-410f-993f-85db418bf827',
-    '2887b9c7-1c9c-4b74-86f4-c89e5be8d8ca',
-    'fc99351e-a1ca-4713-b5c6-09440d47ab5c',
-    'e58d337e-ee71-45ad-9688-f80484779dc6',
-    '48b86b67-7d62-4e86-86b7-707636f53d8f',
-    '06966713-b410-4fc6-a4ce-0f57b088af37',
-    '286d3100-33f9-49c5-87bc-3f21fb2b6569',
-    'd82cbce4-5705-45c3-b3fe-ff86a785b5de',
-    'c1aa1d4c-ad47-4263-9acc-234bc0b67b12',
-    'c3cf356c-cbae-4d47-9536-e2ee559617ec',
-    '1e38bc17-66dc-4930-b2b2-8510a5c674d2',
-  ];
 
   const theme = useAppSelector((state) => state.theme.theme);
 
@@ -119,6 +141,10 @@ export const SupportCentralLiveboardPage: React.FC = () => {
   const [jiraIssueId, setJiraIssueId] = useState('');
   const [jiraIssueData, setJiraIssueData] = useState(null);
   const [isJiraModalOpen, setIsJiraModalOpen] = useState(false);
+  const [tabOptions, setTabOptions] = useState<Tab[] | undefined>(staticTabOptions);
+  const [selectedTabIds, setSelectedTabIds] = useState<string[]>([]);
+  const [selectedTabs, setSelectedTabs] = useState<Tab[]>([]);
+
 
   const [accountNames, setAccountNames] = useState<string[]>([]);
   const [caseNumbers, setCaseNumbers] = useState<string[]>([]);
@@ -126,20 +152,83 @@ export const SupportCentralLiveboardPage: React.FC = () => {
   const [editAccountNames, setEditAccountNames] = useState<string[]>([]);
   const [editCaseNumbers, setEditCaseNumbers] = useState<string[]>([]);
 
+useEffect(() => {
+
+  const fetchFiltersAndTabs = async () => {
+    const { filters, tabs } = await getFilterAndTabs();
+    setAccountNames(filters.accountNames);
+    setCaseNumbers(filters.caseNumbers);
+    setSelectedTabs(tabs);
+
+    setEditAccountNames(filters.accountNames);
+    setEditCaseNumbers(filters.caseNumbers);
+
+    console.log("Edit Account Names:", filters.accountNames);
+    console.log("Edit Case Numbers:", filters.caseNumbers);
+  };
+  fetchFiltersAndTabs();
+
+
+  const handleLiveboardReady = () => {
+
+    const updateTabOptions = (tabs: Tab[]) => {
+      setTabOptions(tabs);
+    };
+    
+    if (embedRef.current) {
+      embedRef.current?.trigger(HostEvent.GetTabs).then(data => {
+        console.log("Tabs data:", data);
+        const extractedTabs: Tab[] = data.Tabs.map((tab: any) => {
+          return {
+            id: tab.id,
+            name: tab.name
+          };
+        });
+        updateTabOptions(extractedTabs);
+      }).catch(error => {
+        console.error("Error fetching tabs:", error);
+      });
+    }
+  };
+
+  if (embedRef.current) {
+    handleLiveboardReady();
+
+  } else {
+    const liveboard = document.querySelector('.support-central-liveboard-embed');
+    if (liveboard) {
+      liveboard.addEventListener('load', handleLiveboardReady);
+    }
+  }
+  return () => {
+    const liveboard = document.querySelector('.support-central-liveboard-embed');
+    if (liveboard) {
+      liveboard.removeEventListener('load', handleLiveboardReady);
+    }
+  };
+}, [embedRef]);
+
+const updateTabsAndFiltersInDatabase = async (updatedTabs: Tab[], updatedAccountNames: string[], updatedCaseNumbers: string[]) => {
+  try {
+    await saveFilterAndTabs({ accountNames: updatedAccountNames, caseNumbers: updatedCaseNumbers }, updatedTabs);
+    console.log('Tabs and filters updated in database.');
+  } catch (error) {
+    console.error('Error updating tabs and filters in database:', error);
+  }
+};
+
+
+const handleTabChange = (selectedTabIds: string[]) => {
+  const updatedTabs = tabOptions?.filter(tab => selectedTabIds.includes(tab.id)) || [];
+  setSelectedTabs(updatedTabs);
+  updateTabsAndFiltersInDatabase(updatedTabs, accountNames, caseNumbers);
+};
   const handleJiraIssueIdChange = (event: any) => {
     setJiraIssueId(event.target.value);
   };
   const fetchJiraIssueData = async () => {
-    const jiraBaseUrl = process.env.REACT_APP_JIRA_BASE_URL;
-    const jiraToken = btoa(`${process.env.REACT_APP_JIRA_USERNAME}:${process.env.REACT_APP_JIRA_API_TOKEN}`);
-
     try {
-      const response = await axios.get(`${jiraBaseUrl}/rest/api/3/issue/${jiraIssueId}`, {
-        headers: {
-          Authorization: `Basic ${jiraToken}`,
-          Accept: 'application/json',
-        },
-      });
+      const response = await axios.get(`/jira-issue/${jiraIssueId}`);
       if (response.data) {
         setJiraIssueData(response.data);
         setIsJiraModalOpen(true);
@@ -148,6 +237,7 @@ export const SupportCentralLiveboardPage: React.FC = () => {
       console.error('Error fetching JIRA issue:', error);
     }
   };
+  const tabIdsForVisibleTabs = selectedTabs.length > 0 ? selectedTabs.map(tab => tab.id) : undefined;
 
   const CardHeader = () => {
     return (
@@ -156,8 +246,21 @@ export const SupportCentralLiveboardPage: React.FC = () => {
         <BaseCol>
           <div className="search-container">
             <Btn icon={<FilterIcon />} onClick={() => setIsBasicModalOpen(!isBasicModalOpen)} size="small" />
-            <BaseInput value={jiraIssueId} onChange={(e) => setJiraIssueId(e.target.value)} placeholder="ISSUE ID" />
-            <Btn onClick={fetchJiraIssueData}>Search</Btn>
+            {/* <BaseInput value={jiraIssueId} onChange={(e) => setJiraIssueId(e.target.value)} placeholder="ISSUE ID" /> */}
+            {/* <Btn onClick={fetchJiraIssueData}>Search</Btn> */}
+            <Select
+              mode="multiple"
+              allowClear
+              style={{ width: '100%', flexGrow: 1, minWidth: '30px' }}
+              placeholder="Select tabs"
+              onChange={handleTabChange}
+              value={selectedTabs.map(tab => tab.id)}
+              className="custom-multi-select"
+            >
+              {tabOptions?.map(option => (
+                <Select.Option key={option.id} value={option.id}>{option.name}</Select.Option>
+              ))}
+            </Select>
           </div>
           {isJiraModalOpen && <JiraIssueModal issueData={jiraIssueData} onClose={() => setIsJiraModalOpen(false)} />}
         </BaseCol>
@@ -176,12 +279,13 @@ export const SupportCentralLiveboardPage: React.FC = () => {
               setAccountNames(editAccountNames);
               setCaseNumbers(editCaseNumbers);
               setIsBasicModalOpen(false);
+              updateTabsAndFiltersInDatabase(selectedTabs, editAccountNames, editCaseNumbers );
               if (embedRef.current) {
                 if (editAccountNames.length == 0 && editCaseNumbers.length > 0) {
                   embedRef.current.trigger(HostEvent.UpdateRuntimeFilters, [
                     {
                       columnName: 'Case Number',
-                      operator: 'EQ',
+                      operator: RuntimeFilterOp.EQ,
                       values: editCaseNumbers,
                     },
                   ]);
@@ -189,7 +293,7 @@ export const SupportCentralLiveboardPage: React.FC = () => {
                   embedRef.current.trigger(HostEvent.UpdateRuntimeFilters, [
                     {
                       columnName: 'Account Name',
-                      operator: 'EQ',
+                      operator: RuntimeFilterOp.EQ,
                       values: editAccountNames,
                     },
                   ]);
@@ -197,12 +301,12 @@ export const SupportCentralLiveboardPage: React.FC = () => {
                   embedRef.current.trigger(HostEvent.UpdateRuntimeFilters, [
                     {
                       columnName: 'Case Number',
-                      operator: 'EQ',
+                      operator: RuntimeFilterOp.EQ,
                       values: editCaseNumbers,
                     },
                     {
                       columnName: 'Account Name',
-                      operator: 'EQ',
+                      operator: RuntimeFilterOp.EQ,
                       values: editAccountNames,
                     },
                   ]);
@@ -228,7 +332,7 @@ export const SupportCentralLiveboardPage: React.FC = () => {
               <LiveboardEmbed
                 ref={embedRef as any}
                 className="support-central-liveboard-embed"
-                liveboardId="68dcf3ec-8e9c-491f-8e2c-090bfd81aa73"
+                liveboardId="1d8000d8-6225-4202-b56c-786fd73f95ad"
                 hiddenActions={[
                   Action.AddToFavorites,
                   Action.Edit,
@@ -243,7 +347,11 @@ export const SupportCentralLiveboardPage: React.FC = () => {
                   Action.RenameModalTitleDescription,
                   Action.SpotIQAnalyze,
                 ]}
-                visibleTabs={showTabs}
+                runtimeFilters={[
+                  { columnName: 'Account Name',operator: RuntimeFilterOp.EQ, values: accountNames },
+                  { columnName: 'Case Number',operator: RuntimeFilterOp.EQ, values: caseNumbers }
+                ]}
+                visibleTabs={tabIdsForVisibleTabs}
                 customizations={{
                   style: {
                     customCSS: {
@@ -271,77 +379,67 @@ export const SupportCentralLiveboardPage: React.FC = () => {
   return (
     <>
       <PageTitle>{t('common.support-central')}</PageTitle>
-      {/* <div>
-        <input
-          type="text"
-          value={jiraIssueId}
-          onChange={(e) => setJiraIssueId(e.target.value)}
-          placeholder="Enter JIRA Issue ID"
-        />
-        <button onClick={fetchJiraIssueData}>Fetch JIRA Issue</button>
-      </div> */}
-      {/* {isJiraModalOpen && <JiraIssueModal issueData={jiraIssueData} onClose={() => setIsJiraModalOpen(false)} />} */}
       {isDesktop ? desktopLayout : desktopLayout}
     </>
   );
 };
 
-interface SearchDataParam {
-  query: string;
-  columnName: string;
-}
+// interface SearchDataParam {
+//   query: string;
+//   columnName: string;
+// }
 
-const cachedData: { [key: string]: { data: string[] } } = {};
+// const cachedData: { [key: string]: { data: string[] } } = {};
 
-async function searchData({ query, columnName }: SearchDataParam): Promise<[string[], any]> {
-  let result: string[] = [];
-  let error = null;
+// async function searchData({ query, columnName }: SearchDataParam): Promise<[string[], any]> {
+//   let result: string[] = [];
+//   let error = null;
 
-  if (cachedData[columnName + query]?.data !== undefined) {
-    return [cachedData[columnName + query].data, error];
-  }
+//   if (cachedData[columnName + query]?.data !== undefined) {
+//     return [cachedData[columnName + query].data, error];
+//   }
 
-  const url = 'https://champagne.thoughtspotstaging.cloud/api/rest/2.0/searchdata';
+//   const url = 'https://champagne.thoughtspotstaging.cloud/api/rest/2.0/searchdata';
 
-  const { token } = await fetchUserAndToken();
+//   const { token } = await fetchUserAndToken();
 
-  const headers = {
-    Authorization: 'Bearer ' + token,
-    'Content-Type': 'application/json',
-    Accept: 'application/json',
-  };
+//   const headers = {
+//     Authorization: 'Bearer ' + token,
+//     'Content-Type': 'application/json',
+//     Accept: 'application/json',
+//   };
 
-  const data = {
-    query_string: `[${columnName}] CONTAINS '${query}'`,
-    logical_table_identifier: '54beb173-d755-42e0-8f73-4d4ec768114f',
-    data_format: 'COMPACT',
-    record_offset: 0,
-    record_size: 500,
-  };
+//   const data = {
+//     query_string: `[${columnName}] CONTAINS '${query}'`,
+//     logical_table_identifier: '54beb173-d755-42e0-8f73-4d4ec768114f',
+//     data_format: 'COMPACT',
+//     record_offset: 0,
+//     record_size: 500,
+//   };
 
-  const defaultData = {
-    query_string: `[${columnName}]`,
-    logical_table_identifier: '54beb173-d755-42e0-8f73-4d4ec768114f',
-    data_format: 'COMPACT',
-    record_offset: 0,
-    record_size: 500,
-  };
+//   const defaultData = {
+//     query_string: `[${columnName}]`,
+//     logical_table_identifier: '54beb173-d755-42e0-8f73-4d4ec768114f',
+//     data_format: 'COMPACT',
+//     record_offset: 0,
+//     record_size: 500,
+//   };
 
-  try {
-    let response;
-    if (query.length > 0) {
-      response = await axios.post(url, data, { headers });
-    } else {
-      response = await axios.post(url, defaultData, { headers });
-    }
-    result = response.data.contents[0].data_rows.map((e: any) => e[0]);
+//   try {
+//     let response;
+//     if (query.length > 0) {
+//       response = await axios.post(url, data, { headers });
+//     } else {
+//       response = await axios.post(url, defaultData, { headers });
+//     }
+//     result = response.data.contents[0].data_rows.map((e: any) => e[0]);
 
-    cachedData[columnName + query] = {
-      data: result,
-    };
-  } catch (e) {
-    error = e;
-  }
+//     cachedData[columnName + query] = {
+//       data: result,
+//     };
+//   } catch (e) {
+//     error = e;
+//   }
 
-  return [result, error];
-}
+//   return [result, error];
+// }

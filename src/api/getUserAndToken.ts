@@ -12,6 +12,7 @@ function parseJwt(token: any) {
 }
 
 const be_url = process.env.REACT_APP_BE_URL || '';
+const fe_url = process.env.REACT_APP_FE_URL || '';
 
 const getJwtTokenFromLocalStorage = () => {
   const token = localStorage.getItem('token');
@@ -29,6 +30,7 @@ export const fetchUserAndToken = async () => {
       username = payload.username;
       //   username = `${process.env.REACT_APP_USERNAME}`;
     }
+    // new token to be added here. 
     const tokenResponse = await axios.post(
       `${be_url}/getauthtoken`,
       { username: username },
@@ -37,10 +39,19 @@ export const fetchUserAndToken = async () => {
         withCredentials: true,
       },
     );
+
+    const getTokenForObjectResponse = await axios.post(`${be_url}/getTokenForObject`, { username }, {
+      headers: { 'Content-Type': 'application/json' },
+      withCredentials: true,
+    });
+    
+    console.log(getTokenForObjectResponse.data.token.token, "This is token for object");
+    
+    // return { email: payload.username, token: getTokenForObjectResponse.data.token.token };
     return { email: payload.username, token: tokenResponse.data };
   } catch (error) {
     console.error('Error fetching data:', error);
-    window.location.replace(`${be_url}/login`);
+    window.location.replace(`${fe_url}/server-error`);
     return { email: '', token: '' };
   }
 };

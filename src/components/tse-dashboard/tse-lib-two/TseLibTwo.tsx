@@ -20,7 +20,7 @@ export const TseLibTwo: React.FC = () => {
     <S.ScreeningsCard title="Backlog and NPS Score" padding={0}>
       <TseWrapper>
         <LiveboardEmbed
-          liveboardId="68dcf3ec-8e9c-491f-8e2c-090bfd81aa73"
+          liveboardId="1d8000d8-6225-4202-b56c-786fd73f95ad"
           visibleVizs={[
             'c370b31d-a44e-49a5-81d5-6cabdc151716',
             '68abaa19-d461-45c7-84f2-fae78d559699',

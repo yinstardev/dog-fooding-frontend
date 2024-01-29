@@ -42,4 +42,5 @@ export const Btn = styled(BaseButton)`
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-grow: 0;
 `;

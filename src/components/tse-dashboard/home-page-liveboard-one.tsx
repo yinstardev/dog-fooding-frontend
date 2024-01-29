@@ -19,7 +19,7 @@ export const TseVizCard: React.FC = () => {
     <DashboardCard padding={0}>
       <TseWrapper>
         <LiveboardEmbed
-          liveboardId="68dcf3ec-8e9c-491f-8e2c-090bfd81aa73"
+          liveboardId="1d8000d8-6225-4202-b56c-786fd73f95ad"
           vizId="60be9072-c1d4-49b1-9738-a70ca254ec00"
           className="tse-viz-one"
           customizations={{

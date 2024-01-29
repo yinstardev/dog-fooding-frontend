@@ -1,6 +1,5 @@
 import { fetchUserAndToken } from '@app/api/getUserAndToken';
 import { THOUGHTSPOT_HOST } from '@app/environment';
-import { getFullAccessToken } from '@app/utils/tse.utils';
 import { PrepareAction, createAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { AuthStatus, AuthType } from '@thoughtspot/visual-embed-sdk';
 import { init } from '@thoughtspot/visual-embed-sdk';
@@ -25,6 +24,7 @@ const doInit = createAsyncThunk('tse/doInit', async (_, { dispatch }) => {
       authType: AuthType.TrustedAuthTokenCookieless,
       getAuthToken: async () => {
         const { token } = await fetchUserAndToken();
+        console.log(token, "This is tthe token")
         if (!token) return '';
         return token;
       },

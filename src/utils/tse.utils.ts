@@ -1,39 +1,4 @@
 import { fetchUserAndToken } from '@app/api/getUserAndToken';
-import { SECRET_KEY, USERNAME } from '@app/environment';
-
-const url = 'https://champagne.thoughtspotstaging.cloud/callosum/v1/tspublic/v1/session/auth/token';
-const secretKey = SECRET_KEY;
-const username = USERNAME;
-const accessLevel = 'FULL';
-
-const headers = {
-  'Content-Type': 'application/x-www-form-urlencoded',
-  Accept: 'text/plain',
-};
-
-const body = new URLSearchParams({
-  secret_key: secretKey,
-  username: username,
-  access_level: accessLevel,
-});
-
-export const getFullAccessToken = async (): Promise<[string | null, any]> => {
-  let data: string | null = null;
-  let error = null;
-
-  try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: headers,
-      body: body,
-    });
-    data = await res.text();
-  } catch (err) {
-    error = err;
-  }
-
-  return [data, error];
-};
 
 type LiveboardData = {
   contents: { data_rows: any[] }[];

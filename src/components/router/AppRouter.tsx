@@ -136,6 +136,7 @@ export const AppRouter: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="server-error" element={<ServerError />} />
         <Route path="/token-handler" element={<TokenHandler />} />
         <Route path={TSE_HOME_PAGE_PATH} element={protectedLayout}>
           <Route index element={<TseHomeDashboard />} />
@@ -156,7 +157,6 @@ export const AppRouter: React.FC = () => {
             <Route path="react-simple-maps" element={<ReactSimple />} />
             <Route path="pigeon-maps" element={<Pigeons />} />
           </Route>
-          <Route path="server-error" element={<ServerError />} />
           <Route path="404" element={<Error404 />} />
           <Route path="profile" element={<ProfileLayout />}>
             <Route path="personal-info" element={<PersonalInfo />} />

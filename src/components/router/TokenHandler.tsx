@@ -16,7 +16,7 @@ const TokenHandler = () => {
       localStorage.setItem('token', token);
       navigate('/');
     } else {
-      navigate('/');
+      navigate('/server-error');
     }
   }, [location]);
 

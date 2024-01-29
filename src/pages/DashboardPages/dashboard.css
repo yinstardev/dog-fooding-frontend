@@ -5,6 +5,40 @@
 
 .search-container {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 10px;
+}
+
+.search-container > * {
+  flex: 1;
+}
+
+.ant-select-selector {
+  padding-right: 8px !important;
+  min-width: fit-content;
+}
+
+.ant-select-selection-overflow {
+  flex-wrap: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ant-select-selection-overflow-item {
+  max-width: 100%;
+}
+
+.ant-select-selection-item {
+  overflow: visible;
+  white-space: nowrap;
+}
+
+.custom-multi-select .ant-select-selection-item {
+  max-width: 100%;
+  overflow: hidden;
+  min-width: 30px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
