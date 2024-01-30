@@ -31,7 +31,7 @@ export const ProfileDropdown: React.FC = () => {
   }, []);
 
   return emailName && user ? (
-    <BasePopover content={<ProfileOverlay />} trigger="click">
+    <BasePopover trigger="click">
       <S.ProfileDropdownHeader as={BaseRow} gutter={[10, 10]} align="middle">
         {/* <BaseCol>
           <BaseAvatar src={user.imgUrl} alt="User" shape="circle" size={40} />

@@ -16,8 +16,8 @@ export const TseStatisticsCards: React.FC = () => {
       <TseWrapper>
         <LiveboardEmbed
           liveboardId="1d8000d8-6225-4202-b56c-786fd73f95ad"
-          visibleVizs={['e3b1a1e7-a4d0-482a-9946-094f5a56fb73', 'fab3c15e-1298-4916-95ac-1298fce68894']}
-          activeTabId="2887b9c7-1c9c-4b74-86f4-c89e5be8d8ca"
+          visibleVizs={['c1c4a542-e7f1-47af-8218-cdfe2bf45bda', '48830202-e9e7-4995-9552-bc3666958621']}
+          activeTabId="c82cdade-51f8-492e-93ab-9181155bd9aa"
           className="tse-viz-four"
           hideLiveboardHeader={true}
           customizations={{

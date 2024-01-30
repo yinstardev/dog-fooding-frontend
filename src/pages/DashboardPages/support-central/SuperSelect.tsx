@@ -4,6 +4,7 @@ import { SuperSelectProps } from './types';
 import { useTranslation } from 'react-i18next';
 import { searchData } from './searchData';
 import { BaseButtonsForm } from '@app/components/common/forms/BaseButtonsForm/BaseButtonsForm';
+import '../dashboard.css'
 
 export const SuperSelect: React.FC<SuperSelectProps> = ({ columnName, defaultValues, updateValues }) => {
     const [options, setOptions] = useState<string[]>([]);

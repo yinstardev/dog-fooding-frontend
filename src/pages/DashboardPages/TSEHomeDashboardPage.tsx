@@ -41,48 +41,21 @@ const TSEHomeDashboardPage: React.FC = () => {
               <StatisticsCards />
             </BaseRow>
           </BaseCol>
-
+          
+{/* 
           <BaseCol id="map" span={24}>
             <TseVizCard />
           </BaseCol>
 
           <BaseCol id="latest-screenings" span={24}>
             <TseLibTwo />
-          </BaseCol>
+          </BaseCol> */}
         </BaseRow>
       </S.LeftSideCol>
 
-      <S.RightSideCol xl={10} xxl={7}>
-        <TseWrapper>
-          <LiveboardEmbed
-            liveboardId="1d8000d8-6225-4202-b56c-786fd73f95ad"
-            visibleVizs={[
-              '2db035d6-7a4f-4f13-a268-6e434aa8de07',
-              '68abaa19-d461-45c7-84f2-fae78d559699',
-
-              '5de21bc6-018d-47fc-99ff-000b8358723d',
-            ]}
-            activeTabId="48b86b67-7d62-4e86-86b7-707636f53d8f"
-            className="tse-viz-three"
-            hideLiveboardHeader={true}
-            customizations={{
-              style: {
-                customCSS: {
-                  variables: {
-                    '--ts-var-application-color': themeObject[theme].background,
-                    '--ts-var-root-background': themeObject[theme].background,
-                  },
-                  rules_UNSTABLE: {
-                    'body > app-controller > blink-app-page > div > div > div > bk-powered-footer': {
-                      display: 'none',
-                    },
-                  },
-                },
-              },
-            }}
-          />
-        </TseWrapper>
-      </S.RightSideCol>
+      {/* <S.RightSideCol xl={10} xxl={7}>
+        
+      </S.RightSideCol> */}
     </BaseRow>
   );
 

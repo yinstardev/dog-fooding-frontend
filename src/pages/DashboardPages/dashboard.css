@@ -7,10 +7,10 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
+  gap: 1em;
 }
 
-.search-container > * {
+/* .search-container > * {
   flex: 1;
 }
 
@@ -28,17 +28,20 @@
 
 .ant-select-selection-overflow-item {
   max-width: 100%;
-}
+} */
 
-.ant-select-selection-item {
+/* .ant-select-selection-item {
   overflow: visible;
   white-space: nowrap;
+} */
+
+.custom-multi-select {
+  min-width: 250px !important;
+  max-width: 100%;
+  width: auto; /* Allows the width to grow with content, up to max-width */
 }
 
-.custom-multi-select .ant-select-selection-item {
-  max-width: 100%;
-  overflow: hidden;
-  min-width: 30px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.custom-multi-select .ant-select-selector {
+  max-height: 100px; /* Adjust as needed */
+  overflow-y: auto; /* Allows vertical scroll on overflow */
 }

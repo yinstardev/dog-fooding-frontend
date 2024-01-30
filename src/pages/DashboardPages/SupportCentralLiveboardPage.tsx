@@ -27,16 +27,9 @@ import { getFilterAndTabs, saveFilterAndTabs } from '@app/api/db.api';
 import { OperationType } from '@thoughtspot/visual-embed-sdk/lib/src/utils/graphql/answerService/answerService';
 import { SuperSelect } from './support-central/SuperSelect';
 import { Tab } from './support-central/types';
+import CardHeader from './support-central/CardHeader';
+import fetchAndTransformTabs from '@app/api/getTabs';
 
-// interface Tab {
-//   id: string;
-//   name: string;
-// }
-
-// interface Filters {
-//   accountNames: string[];
-//   caseNumbers: string[];
-// }
 
 const staticTabOptions: Tab[] = [
   { name: "Goals", id: "f897c5de-ee38-46e0-9734-d9ed5d4ecc83" },
@@ -52,81 +45,6 @@ const staticTabOptions: Tab[] = [
   { name: "Patch Status", id: "6991021a-c267-4454-8056-989e48d7ced8" }
 ];
 
-// function SuperSelect({
-//   columnName,
-//   defaultValues,
-//   updateValues,
-// }: {
-//   columnName: string;
-//   defaultValues?: string[];
-//   updateValues?: (values: string[]) => void;
-// }) {
-//   const [options, setOptions] = useState<string[]>([]);
-//   const [isLoading, setIsLoading] = useState(false);
-//   const [selectedValues, setSelectedValues] = useState<string[]>(defaultValues || []);
-//   const { t } = useTranslation();
-
-
-//   const updateOptions = (data: string[]) => {
-//     const allValues = [...new Set([...data, ...options])];
-//     setOptions(allValues);
-//   };
-//   const handleDeselect = (deselectedValue: any) => {
-//     const newValues = selectedValues.filter((value) => value !== deselectedValue);
-//     setSelectedValues(newValues);
-//     updateValues?.(newValues);
-//   };
-//    // debugger;
-//   useEffect(() => {
-//     setSelectedValues(defaultValues || []);
-//     searchData({ query: '', columnName }).then(([data]) => {updateOptions(data);
-//     console.log(data)});
-    
-//     return () => {
-//       console.log("SuperSelect unmounting or updating", defaultValues);
-//   };
-//   }, [defaultValues, columnName]);
-
-//   const test = selectedValues.map(item => ({ value: item, label: item }));
-
-//   return (
-//     <BaseButtonsForm.Item
-//       name={columnName}
-//       label={columnName}
-//       rules={[{ required: false, message: t('forms.validationFormLabels.colorError'), type: 'array' }]}
-//     >
-//       <Select
-//         mode="multiple"
-//         options={options.map((e) => ({ value: e, label: e }))}
-//         onSearch={async (query) => {
-//           if (isLoading) return;
-//           setIsLoading(true);
-//           try {
-//             const [values, error] = await searchData({ query, columnName });
-//             if (!values || error) {
-//               console.error(error);
-//               setIsLoading(false);
-//               return;
-//             }
-//             updateOptions(values);
-//           } catch (e) {
-//             console.error(e);
-//           }
-//           setIsLoading(false);
-//         }}
-//         onSelect={(e: any) => {
-//           const newValues = [...selectedValues, e];
-//           updateValues?.(newValues);
-//           setSelectedValues(newValues);
-//         }}
-//         onDeselect={handleDeselect}
-//         value={test}
-//         defaultValue={test}
-//         loading={isLoading}
-//       />
-//     </BaseButtonsForm.Item>
-//   );
-// }
 
 export const SupportCentralLiveboardPage: React.FC = () => {
   const { isTablet, isDesktop } = useResponsive();
@@ -141,7 +59,7 @@ export const SupportCentralLiveboardPage: React.FC = () => {
   const [jiraIssueId, setJiraIssueId] = useState('');
   const [jiraIssueData, setJiraIssueData] = useState(null);
   const [isJiraModalOpen, setIsJiraModalOpen] = useState(false);
-  const [tabOptions, setTabOptions] = useState<Tab[] | undefined>(staticTabOptions);
+  const [tabOptions, setTabOptions] = useState<Tab[] | undefined>(undefined);
   const [selectedTabIds, setSelectedTabIds] = useState<string[]>([]);
   const [selectedTabs, setSelectedTabs] = useState<Tab[]>([]);
 
@@ -168,45 +86,54 @@ useEffect(() => {
   };
   fetchFiltersAndTabs();
 
+  const getTabs = async () => {
 
-  const handleLiveboardReady = () => {
-
-    const updateTabOptions = (tabs: Tab[]) => {
-      setTabOptions(tabs);
-    };
-    
-    if (embedRef.current) {
-      embedRef.current?.trigger(HostEvent.GetTabs).then(data => {
-        console.log("Tabs data:", data);
-        const extractedTabs: Tab[] = data.Tabs.map((tab: any) => {
-          return {
-            id: tab.id,
-            name: tab.name
-          };
-        });
-        updateTabOptions(extractedTabs);
-      }).catch(error => {
-        console.error("Error fetching tabs:", error);
-      });
-    }
-  };
-
-  if (embedRef.current) {
-    handleLiveboardReady();
-
-  } else {
-    const liveboard = document.querySelector('.support-central-liveboard-embed');
-    if (liveboard) {
-      liveboard.addEventListener('load', handleLiveboardReady);
-    }
+    const fetchedTabs = await fetchAndTransformTabs();
+    console.log(fetchedTabs, "Fetched Tabs : *** !! ***")
+    await setTabOptions(fetchedTabs);
   }
-  return () => {
-    const liveboard = document.querySelector('.support-central-liveboard-embed');
-    if (liveboard) {
-      liveboard.removeEventListener('load', handleLiveboardReady);
-    }
-  };
-}, [embedRef]);
+
+  getTabs();
+
+  // const handleLiveboardReady = () => {
+
+  //   const updateTabOptions = (tabs: Tab[]) => {
+  //     setTabOptions(tabs);
+  //   };
+    
+  //   if (embedRef.current) {
+  //     embedRef.current?.trigger(HostEvent.GetTabs).then(data => {
+  //       console.log("Tabs data:", data);
+  //       const extractedTabs: Tab[] = data.Tabs.map((tab: any) => {
+  //         return {
+  //           id: tab.id,
+  //           name: tab.name
+  //         };
+  //       });
+  //       updateTabOptions(extractedTabs);
+  //     }).catch(error => {
+  //       console.error("Error fetching tabs:", error);
+  //     });
+  //   }
+  // };
+
+  // if (embedRef.current) {
+    // handleLiveboardReady();
+    // console.log("Embed Current")
+
+  // } else {
+  //   const liveboard = document.querySelector('.support-central-liveboard-embed');
+  //   if (liveboard) {
+  //     liveboard.addEventListener('load', handleLiveboardReady);
+  //   }
+  // }
+  // return () => {
+  //   const liveboard = document.querySelector('.support-central-liveboard-embed');
+  //   if (liveboard) {
+  //     liveboard.removeEventListener('load', handleLiveboardReady);
+  //   }
+  // };
+}, []);
 
 const updateTabsAndFiltersInDatabase = async (updatedTabs: Tab[], updatedAccountNames: string[], updatedCaseNumbers: string[]) => {
   try {
@@ -239,39 +166,21 @@ const handleTabChange = (selectedTabIds: string[]) => {
   };
   const tabIdsForVisibleTabs = selectedTabs.length > 0 ? selectedTabs.map(tab => tab.id) : undefined;
 
-  const CardHeader = () => {
-    return (
-      <BaseRow>
-        <BaseCol lg={4}>Support Central</BaseCol>
-        <BaseCol>
-          <div className="search-container">
-            <Btn icon={<FilterIcon />} onClick={() => setIsBasicModalOpen(!isBasicModalOpen)} size="small" />
-            {/* <BaseInput value={jiraIssueId} onChange={(e) => setJiraIssueId(e.target.value)} placeholder="ISSUE ID" /> */}
-            {/* <Btn onClick={fetchJiraIssueData}>Search</Btn> */}
-            <Select
-              mode="multiple"
-              allowClear
-              style={{ width: '100%', flexGrow: 1, minWidth: '30px' }}
-              placeholder="Select tabs"
-              onChange={handleTabChange}
-              value={selectedTabs.map(tab => tab.id)}
-              className="custom-multi-select"
-            >
-              {tabOptions?.map(option => (
-                <Select.Option key={option.id} value={option.id}>{option.name}</Select.Option>
-              ))}
-            </Select>
-          </div>
-          {isJiraModalOpen && <JiraIssueModal issueData={jiraIssueData} onClose={() => setIsJiraModalOpen(false)} />}
-        </BaseCol>
-      </BaseRow>
-    );
-  };
 
   const desktopLayout = (
     <BaseRow>
       <BaseCol xl={24} lg={24}>
-        <DashboardCard title={<CardHeader />}>
+        <DashboardCard title={<CardHeader
+              onFilterClick={() => setIsBasicModalOpen(!isBasicModalOpen)}
+              selectedTabs={selectedTabs}
+              handleTabChange={handleTabChange}
+              tabOptions={tabOptions}
+              isBasicModalOpen={isBasicModalOpen}
+              setIsBasicModalOpen={setIsBasicModalOpen}
+              isJiraModalOpen={isJiraModalOpen}
+              setIsJiraModalOpen={setIsJiraModalOpen}
+              jiraIssueData={jiraIssueData}
+            />}>
           <BaseModal
             title={'Filter'}
             open={isBasicModalOpen}
@@ -383,63 +292,3 @@ const handleTabChange = (selectedTabIds: string[]) => {
     </>
   );
 };
-
-// interface SearchDataParam {
-//   query: string;
-//   columnName: string;
-// }
-
-// const cachedData: { [key: string]: { data: string[] } } = {};
-
-// async function searchData({ query, columnName }: SearchDataParam): Promise<[string[], any]> {
-//   let result: string[] = [];
-//   let error = null;
-
-//   if (cachedData[columnName + query]?.data !== undefined) {
-//     return [cachedData[columnName + query].data, error];
-//   }
-
-//   const url = 'https://champagne.thoughtspotstaging.cloud/api/rest/2.0/searchdata';
-
-//   const { token } = await fetchUserAndToken();
-
-//   const headers = {
-//     Authorization: 'Bearer ' + token,
-//     'Content-Type': 'application/json',
-//     Accept: 'application/json',
-//   };
-
-//   const data = {
-//     query_string: `[${columnName}] CONTAINS '${query}'`,
-//     logical_table_identifier: '54beb173-d755-42e0-8f73-4d4ec768114f',
-//     data_format: 'COMPACT',
-//     record_offset: 0,
-//     record_size: 500,
-//   };
-
-//   const defaultData = {
-//     query_string: `[${columnName}]`,
-//     logical_table_identifier: '54beb173-d755-42e0-8f73-4d4ec768114f',
-//     data_format: 'COMPACT',
-//     record_offset: 0,
-//     record_size: 500,
-//   };
-
-//   try {
-//     let response;
-//     if (query.length > 0) {
-//       response = await axios.post(url, data, { headers });
-//     } else {
-//       response = await axios.post(url, defaultData, { headers });
-//     }
-//     result = response.data.contents[0].data_rows.map((e: any) => e[0]);
-
-//     cachedData[columnName + query] = {
-//       data: result,
-//     };
-//   } catch (e) {
-//     error = e;
-//   }
-
-//   return [result, error];
-// }

@@ -22,10 +22,8 @@ export const TseLibTwo: React.FC = () => {
         <LiveboardEmbed
           liveboardId="1d8000d8-6225-4202-b56c-786fd73f95ad"
           visibleVizs={[
-            'c370b31d-a44e-49a5-81d5-6cabdc151716',
-            '68abaa19-d461-45c7-84f2-fae78d559699',
-            'd4c4ba36-0465-4d6f-9d38-834ad998b1eb',
-            'bd27e869-722c-4e73-9b05-d02dd7276d09',
+            'e8d7ae87-67d2-466d-97db-14e95ab18cfd',
+            '76880b19-d43c-4c09-a351-8cde96c85f4f',
           ]}
           className="tse-viz-two"
           hideLiveboardHeader={true}

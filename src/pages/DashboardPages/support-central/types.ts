@@ -19,5 +19,11 @@ export interface Tab {
     selectedTabs: Tab[];
     handleTabChange: (selectedTabIds: string[]) => void;
     tabOptions: Tab[] | undefined;
+    isBasicModalOpen: boolean;
+    setIsBasicModalOpen: (isOpen: boolean) => void;
+    isJiraModalOpen: boolean;
+    setIsJiraModalOpen: (isOpen: boolean) => void;
+    jiraIssueData: any;
   }
+  
   

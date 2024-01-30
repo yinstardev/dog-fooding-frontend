@@ -17,18 +17,24 @@ export const getStatistics = async (): Promise<Statistic[]> => {
     },
   });
 
-  if (libDataError || !libData || !libData.contents || !Array.isArray(libData.contents)) {
-    return [];
-  }
+  console.log('libData:', libData);
+  console.log('libDataError:', libDataError);
+
+  if (libDataError || !libData || !libData.contents) return [];
 
   const data = libData.contents.map((data, id) => {
-    return {
-      id: id + 1,
-      prevValue: data.data_rows[1][1],
-      value: data.data_rows[0][1],
-      unit: 'kg' as 'kg',
-    };
-  });
+    if (data.data_rows.length > 1 && data.data_rows[0].length > 1 && data.data_rows[1].length > 1) {
+      return {
+        id: id + 1,
+        prevValue: data.data_rows[1][1],
+        value: data.data_rows[0][1],
+        unit: '',
+      } as Statistic;
+    } else {
+      console.error('Unexpected data structure:', data);
+      return null;
+    }
+  }).filter((item): item is Statistic => item !== null);
 
   return data;
 };

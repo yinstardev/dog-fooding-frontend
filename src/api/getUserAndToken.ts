@@ -45,7 +45,7 @@ export const fetchUserAndToken = async () => {
       withCredentials: true,
     });
     
-    console.log(getTokenForObjectResponse.data.token.token, "This is token for object");
+    // console.log(getTokenForObjectResponse.data.token.token, "This is token for object");
     
     // return { email: payload.username, token: getTokenForObjectResponse.data.token.token };
     return { email: payload.username, token: tokenResponse.data };
