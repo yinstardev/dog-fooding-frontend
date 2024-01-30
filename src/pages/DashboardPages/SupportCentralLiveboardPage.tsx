@@ -33,7 +33,7 @@ import { getFilterAndTabs, saveFilterAndTabs } from '@app/api/db.api';
 import { OperationType } from '@thoughtspot/visual-embed-sdk/lib/src/utils/graphql/answerService/answerService';
 import { SuperSelect } from './support-central/SuperSelect';
 import { Tab } from './support-central/types';
-import CardHeader from './support-central/CardHeader';
+// import CardHeader from './support-central/CardHeader';
 import fetchAndTransformTabs from '@app/api/getTabs';
 
 const staticTabOptions: Tab[] = [
@@ -88,13 +88,26 @@ export const SupportCentralLiveboardPage: React.FC = () => {
     };
     fetchFiltersAndTabs();
 
-    const getTabs = async () => {
-      const fetchedTabs = await fetchAndTransformTabs();
-      console.log(fetchedTabs, 'Fetched Tabs : *** !! ***');
-      await setTabOptions(fetchedTabs);
+    // const getTabs = async () => {
+    //   const fetchedTabs = await fetchAndTransformTabs();
+    //   console.log(fetchedTabs, 'Fetched Tabs : *** !! ***');
+    //   await setTabOptions(fetchedTabs);
+    // };
+
+    // getTabs();
+
+    const fetchData = async () => {
+        try {
+            const fetchedTabs = await fetchAndTransformTabs();
+            if (fetchedTabs) {
+                setTabOptions(fetchedTabs); // Update state with fetched tabs
+            }
+        } catch (error) {
+            console.error('Error fetching tabs:', error);
+        }
     };
 
-    getTabs();
+  fetchData();
 
     // const handleLiveboardReady = () => {
 
@@ -170,22 +183,40 @@ export const SupportCentralLiveboardPage: React.FC = () => {
   };
   const tabIdsForVisibleTabs = selectedTabs.length > 0 ? selectedTabs.map((tab) => tab.id) : undefined;
 
+  const CardHeader = () => {
+    return (
+      <BaseRow>
+        <BaseCol lg={4}>Support Central</BaseCol>
+        <BaseCol>
+          <div className="search-container">
+            <Btn icon={<FilterIcon />} onClick={() => setIsBasicModalOpen(!isBasicModalOpen)} size="small" />
+            <Select
+              mode="multiple"
+              allowClear
+              style={{ minWidth: '50px' }}
+              placeholder="Select tabs"
+              onChange={handleTabChange}
+              value={selectedTabs.map((tab) => tab.name)}
+              className="custom-multi-select"
+            >
+              {tabOptions?.map((option) => (
+                <Select.Option key={option.id} value={option.id}>
+                  {option.name}
+                </Select.Option>
+              ))}
+            </Select>
+          </div>
+          {isJiraModalOpen && <JiraIssueModal issueData={jiraIssueData} onClose={() => setIsJiraModalOpen(false)} />}
+        </BaseCol>
+      </BaseRow>
+    );
+  };
   const desktopLayout = (
     <BaseRow>
       <BaseCol xl={24} lg={24}>
         <DashboardCard
           title={
-            <CardHeader
-              onFilterClick={() => setIsBasicModalOpen(!isBasicModalOpen)}
-              selectedTabs={selectedTabs}
-              handleTabChange={handleTabChange}
-              tabOptions={tabOptions}
-              isBasicModalOpen={isBasicModalOpen}
-              setIsBasicModalOpen={setIsBasicModalOpen}
-              isJiraModalOpen={isJiraModalOpen}
-              setIsJiraModalOpen={setIsJiraModalOpen}
-              jiraIssueData={jiraIssueData}
-            />
+            <CardHeader />
           }
         >
           <BaseModal

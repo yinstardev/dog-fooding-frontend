@@ -7,20 +7,53 @@ interface Tab {
   name: string;
 }
 
-const fetchAndTransformTabs = async (): Promise<Tab[]> => {
-  try {
-    const response = await axios.get(`${be_url}/getTabs`, { timeout: 30000 });
+// const fetchAndTransformTabs = async (): Promise<Tab[]> => {
+//   try {
+//     const response = await axios.get(`${be_url}/getTabs`, { timeout: 30000 });
 
-    const transformedTabs: Tab[] = response.data.tabs.tab.map((tab: any) => ({
-      id: tab.header.guid,
-      name: tab.header.display_name,
-    }));
+//     const transformedTabs: Tab[] = response.data.tabs.tab.map((tab: any) => ({
+//       id: tab.header.guid,
+//       name: tab.header.display_name,
+//     }));
 
-    return transformedTabs;
-  } catch (error) {
-    console.error('Error fetching tabs:', error);
-    return [];
-  }
+//     return transformedTabs;
+//   } catch (error) {
+//     console.error('Error fetching tabs:', error);
+//     return [];
+//   }
+// };
+
+interface Tab {
+    id: string;
+    name: string;
+}
+
+
+
+const fetchAndTransformTabs = async () => {
+    try {
+        await axios.get(`${be_url}/getTabs`);
+        return await checkStatus();
+    } catch (error) {
+        console.error('Error initiating getTabs:', error);
+    }
 };
+
+const checkStatus = async (): Promise<Tab[]> => {
+    const statusResponse = await axios.get(`${be_url}/getStatus`);
+    const status = statusResponse.data.status;
+
+    if (status === 'processing') {
+        await new Promise(resolve => setTimeout(resolve, 5000));
+        return await checkStatus(); // Recursive call
+    } else if (status === 'completed') {
+        return statusResponse.data.data; // Assuming this is Tab[]
+    } else if (status === 'failed') {
+        throw new Error('Error:', statusResponse.data.error);
+    }
+
+    throw new Error('Unexpected status');
+};
+
 
 export default fetchAndTransformTabs;
