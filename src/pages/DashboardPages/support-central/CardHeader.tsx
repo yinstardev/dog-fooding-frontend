@@ -31,7 +31,7 @@ const CardHeader: React.FC<CardHeaderProps> = ({
             style={{ minWidth: '50px' }}
             placeholder="Select tabs"
             onChange={handleTabChange}
-            value={selectedTabs.map((tab) => tab.id)}
+            value={selectedTabs.map((tab) => tab.name)}
             className="custom-multi-select"
           >
             {tabOptions?.map((option) => (
