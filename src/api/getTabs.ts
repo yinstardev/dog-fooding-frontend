@@ -9,7 +9,7 @@ interface Tab {
 
 const fetchAndTransformTabs = async (): Promise<Tab[]> => {
   try {
-    const response = await axios.get(`${be_url}/getTabs`);
+    const response = await axios.get(`${be_url}/getTabs`,{ timeout: 30000 });
 
     const transformedTabs: Tab[] = response.data.tabs.tab.map((tab: any) => ({
       id: tab.header.guid,
