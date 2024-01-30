@@ -41,8 +41,8 @@ const TSEHomeDashboardPage: React.FC = () => {
               <StatisticsCards />
             </BaseRow>
           </BaseCol>
-          
-{/* 
+
+          {/* 
           <BaseCol id="map" span={24}>
             <TseVizCard />
           </BaseCol>

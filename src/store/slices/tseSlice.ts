@@ -24,7 +24,7 @@ const doInit = createAsyncThunk('tse/doInit', async (_, { dispatch }) => {
       authType: AuthType.TrustedAuthTokenCookieless,
       getAuthToken: async () => {
         const { token } = await fetchUserAndToken();
-        console.log(token, "This is tthe token")
+        console.log(token, 'This is tthe token');
         if (!token) return '';
         return token;
       },

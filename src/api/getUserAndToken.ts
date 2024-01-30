@@ -30,7 +30,7 @@ export const fetchUserAndToken = async () => {
       username = payload.username;
       //   username = `${process.env.REACT_APP_USERNAME}`;
     }
-    // new token to be added here. 
+    // new token to be added here.
     const tokenResponse = await axios.post(
       `${be_url}/getauthtoken`,
       { username: username },
@@ -40,13 +40,17 @@ export const fetchUserAndToken = async () => {
       },
     );
 
-    const getTokenForObjectResponse = await axios.post(`${be_url}/getTokenForObject`, { username }, {
-      headers: { 'Content-Type': 'application/json' },
-      withCredentials: true,
-    });
-    
+    const getTokenForObjectResponse = await axios.post(
+      `${be_url}/getTokenForObject`,
+      { username },
+      {
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true,
+      },
+    );
+
     // console.log(getTokenForObjectResponse.data.token.token, "This is token for object");
-    
+
     // return { email: payload.username, token: getTokenForObjectResponse.data.token.token };
     return { email: payload.username, token: tokenResponse.data };
   } catch (error) {

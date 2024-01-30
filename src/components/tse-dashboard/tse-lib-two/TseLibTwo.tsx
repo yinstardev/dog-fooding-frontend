@@ -21,10 +21,7 @@ export const TseLibTwo: React.FC = () => {
       <TseWrapper>
         <LiveboardEmbed
           liveboardId="1d8000d8-6225-4202-b56c-786fd73f95ad"
-          visibleVizs={[
-            'e8d7ae87-67d2-466d-97db-14e95ab18cfd',
-            '76880b19-d43c-4c09-a351-8cde96c85f4f',
-          ]}
+          visibleVizs={['e8d7ae87-67d2-466d-97db-14e95ab18cfd', '76880b19-d43c-4c09-a351-8cde96c85f4f']}
           className="tse-viz-two"
           hideLiveboardHeader={true}
           customizations={{

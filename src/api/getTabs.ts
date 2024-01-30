@@ -13,7 +13,7 @@ const fetchAndTransformTabs = async (): Promise<Tab[]> => {
 
     const transformedTabs: Tab[] = response.data.tabs.tab.map((tab: any) => ({
       id: tab.header.guid,
-      name: tab.header.display_name
+      name: tab.header.display_name,
     }));
 
     return transformedTabs;

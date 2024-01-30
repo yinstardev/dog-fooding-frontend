@@ -5,7 +5,7 @@ import { BaseTypography } from '../common/BaseTypography/BaseTypography';
 
 export const Wrapper = styled.div`
   display: flex;
-  min-height:100vh;
+  min-height: 100vh;
   flex-direction: column;
   align-items: center;
   padding: 3.75rem 1.25rem;

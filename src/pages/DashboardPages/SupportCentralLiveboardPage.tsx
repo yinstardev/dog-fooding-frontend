@@ -5,7 +5,13 @@ import { PageTitle } from '@app/components/common/PageTitle/PageTitle';
 import { useResponsive } from '@app/hooks/useResponsive';
 import { BaseRow } from '@app/components/common/BaseRow/BaseRow';
 import { BaseCol } from '@app/components/common/BaseCol/BaseCol';
-import { Action, HostEvent, LiveboardEmbed, RuntimeFilterOp, useEmbedRef } from '@thoughtspot/visual-embed-sdk/lib/src/react';
+import {
+  Action,
+  HostEvent,
+  LiveboardEmbed,
+  RuntimeFilterOp,
+  useEmbedRef,
+} from '@thoughtspot/visual-embed-sdk/lib/src/react';
 import { useAppSelector } from '@app/hooks/reduxHooks';
 import { DashboardCard } from '@app/components/medical-dashboard/DashboardCard/DashboardCard';
 
@@ -30,21 +36,19 @@ import { Tab } from './support-central/types';
 import CardHeader from './support-central/CardHeader';
 import fetchAndTransformTabs from '@app/api/getTabs';
 
-
 const staticTabOptions: Tab[] = [
-  { name: "Goals", id: "f897c5de-ee38-46e0-9734-d9ed5d4ecc83" },
-  { name: "Cases", id: "c82cdade-51f8-492e-93ab-9181155bd9aa" },
-  { name: "Customer Case History", id: "8ad26876-752e-4d0d-a763-f4aa98323b6f" },
-  { name: "Clusters", id: "257da5ab-2678-435e-9bfb-711e413502da" },
-  { name: "Red Accounts", id: "bf1d15f4-3690-4b37-8cd1-5f0967cf588c" },
-  { name: "Yellow Accounts", id: "d1a7e93b-21a7-419c-8834-e1760ec1659a" },
-  { name: "NPS", id: "b08310de-a581-401b-bed1-b0416a6e1b58" },
-  { name: "SRE View", id: "0d953678-adf9-4c90-baf1-e861d13cb9e6" },
-  { name: "Production Engineering View", id: "d09ac3fb-00d9-4007-a614-c546183c19a0" },
-  { name: "Engineering View", id: "693df25f-69e3-4c32-9015-9b81c1785736" },
-  { name: "Patch Status", id: "6991021a-c267-4454-8056-989e48d7ced8" }
+  { name: 'Goals', id: 'f897c5de-ee38-46e0-9734-d9ed5d4ecc83' },
+  { name: 'Cases', id: 'c82cdade-51f8-492e-93ab-9181155bd9aa' },
+  { name: 'Customer Case History', id: '8ad26876-752e-4d0d-a763-f4aa98323b6f' },
+  { name: 'Clusters', id: '257da5ab-2678-435e-9bfb-711e413502da' },
+  { name: 'Red Accounts', id: 'bf1d15f4-3690-4b37-8cd1-5f0967cf588c' },
+  { name: 'Yellow Accounts', id: 'd1a7e93b-21a7-419c-8834-e1760ec1659a' },
+  { name: 'NPS', id: 'b08310de-a581-401b-bed1-b0416a6e1b58' },
+  { name: 'SRE View', id: '0d953678-adf9-4c90-baf1-e861d13cb9e6' },
+  { name: 'Production Engineering View', id: 'd09ac3fb-00d9-4007-a614-c546183c19a0' },
+  { name: 'Engineering View', id: '693df25f-69e3-4c32-9015-9b81c1785736' },
+  { name: 'Patch Status', id: '6991021a-c267-4454-8056-989e48d7ced8' },
 ];
-
 
 export const SupportCentralLiveboardPage: React.FC = () => {
   const { isTablet, isDesktop } = useResponsive();
@@ -63,93 +67,93 @@ export const SupportCentralLiveboardPage: React.FC = () => {
   const [selectedTabIds, setSelectedTabIds] = useState<string[]>([]);
   const [selectedTabs, setSelectedTabs] = useState<Tab[]>([]);
 
-
   const [accountNames, setAccountNames] = useState<string[]>([]);
   const [caseNumbers, setCaseNumbers] = useState<string[]>([]);
 
   const [editAccountNames, setEditAccountNames] = useState<string[]>([]);
   const [editCaseNumbers, setEditCaseNumbers] = useState<string[]>([]);
 
-useEffect(() => {
+  useEffect(() => {
+    const fetchFiltersAndTabs = async () => {
+      const { filters, tabs } = await getFilterAndTabs();
+      setAccountNames(filters.accountNames);
+      setCaseNumbers(filters.caseNumbers);
+      setSelectedTabs(tabs);
 
-  const fetchFiltersAndTabs = async () => {
-    const { filters, tabs } = await getFilterAndTabs();
-    setAccountNames(filters.accountNames);
-    setCaseNumbers(filters.caseNumbers);
-    setSelectedTabs(tabs);
+      setEditAccountNames(filters.accountNames);
+      setEditCaseNumbers(filters.caseNumbers);
 
-    setEditAccountNames(filters.accountNames);
-    setEditCaseNumbers(filters.caseNumbers);
+      console.log('Edit Account Names:', filters.accountNames);
+      console.log('Edit Case Numbers:', filters.caseNumbers);
+    };
+    fetchFiltersAndTabs();
 
-    console.log("Edit Account Names:", filters.accountNames);
-    console.log("Edit Case Numbers:", filters.caseNumbers);
-  };
-  fetchFiltersAndTabs();
+    const getTabs = async () => {
+      const fetchedTabs = await fetchAndTransformTabs();
+      console.log(fetchedTabs, 'Fetched Tabs : *** !! ***');
+      await setTabOptions(fetchedTabs);
+    };
 
-  const getTabs = async () => {
+    getTabs();
 
-    const fetchedTabs = await fetchAndTransformTabs();
-    console.log(fetchedTabs, "Fetched Tabs : *** !! ***")
-    await setTabOptions(fetchedTabs);
-  }
+    // const handleLiveboardReady = () => {
 
-  getTabs();
+    //   const updateTabOptions = (tabs: Tab[]) => {
+    //     setTabOptions(tabs);
+    //   };
 
-  // const handleLiveboardReady = () => {
+    //   if (embedRef.current) {
+    //     embedRef.current?.trigger(HostEvent.GetTabs).then(data => {
+    //       console.log("Tabs data:", data);
+    //       const extractedTabs: Tab[] = data.Tabs.map((tab: any) => {
+    //         return {
+    //           id: tab.id,
+    //           name: tab.name
+    //         };
+    //       });
+    //       updateTabOptions(extractedTabs);
+    //     }).catch(error => {
+    //       console.error("Error fetching tabs:", error);
+    //     });
+    //   }
+    // };
 
-  //   const updateTabOptions = (tabs: Tab[]) => {
-  //     setTabOptions(tabs);
-  //   };
-    
-  //   if (embedRef.current) {
-  //     embedRef.current?.trigger(HostEvent.GetTabs).then(data => {
-  //       console.log("Tabs data:", data);
-  //       const extractedTabs: Tab[] = data.Tabs.map((tab: any) => {
-  //         return {
-  //           id: tab.id,
-  //           name: tab.name
-  //         };
-  //       });
-  //       updateTabOptions(extractedTabs);
-  //     }).catch(error => {
-  //       console.error("Error fetching tabs:", error);
-  //     });
-  //   }
-  // };
-
-  // if (embedRef.current) {
+    // if (embedRef.current) {
     // handleLiveboardReady();
     // console.log("Embed Current")
 
-  // } else {
-  //   const liveboard = document.querySelector('.support-central-liveboard-embed');
-  //   if (liveboard) {
-  //     liveboard.addEventListener('load', handleLiveboardReady);
-  //   }
-  // }
-  // return () => {
-  //   const liveboard = document.querySelector('.support-central-liveboard-embed');
-  //   if (liveboard) {
-  //     liveboard.removeEventListener('load', handleLiveboardReady);
-  //   }
-  // };
-}, []);
+    // } else {
+    //   const liveboard = document.querySelector('.support-central-liveboard-embed');
+    //   if (liveboard) {
+    //     liveboard.addEventListener('load', handleLiveboardReady);
+    //   }
+    // }
+    // return () => {
+    //   const liveboard = document.querySelector('.support-central-liveboard-embed');
+    //   if (liveboard) {
+    //     liveboard.removeEventListener('load', handleLiveboardReady);
+    //   }
+    // };
+  }, []);
 
-const updateTabsAndFiltersInDatabase = async (updatedTabs: Tab[], updatedAccountNames: string[], updatedCaseNumbers: string[]) => {
-  try {
-    await saveFilterAndTabs({ accountNames: updatedAccountNames, caseNumbers: updatedCaseNumbers }, updatedTabs);
-    console.log('Tabs and filters updated in database.');
-  } catch (error) {
-    console.error('Error updating tabs and filters in database:', error);
-  }
-};
+  const updateTabsAndFiltersInDatabase = async (
+    updatedTabs: Tab[],
+    updatedAccountNames: string[],
+    updatedCaseNumbers: string[],
+  ) => {
+    try {
+      await saveFilterAndTabs({ accountNames: updatedAccountNames, caseNumbers: updatedCaseNumbers }, updatedTabs);
+      console.log('Tabs and filters updated in database.');
+    } catch (error) {
+      console.error('Error updating tabs and filters in database:', error);
+    }
+  };
 
-
-const handleTabChange = (selectedTabIds: string[]) => {
-  const updatedTabs = tabOptions?.filter(tab => selectedTabIds.includes(tab.id)) || [];
-  setSelectedTabs(updatedTabs);
-  updateTabsAndFiltersInDatabase(updatedTabs, accountNames, caseNumbers);
-};
+  const handleTabChange = (selectedTabIds: string[]) => {
+    const updatedTabs = tabOptions?.filter((tab) => selectedTabIds.includes(tab.id)) || [];
+    setSelectedTabs(updatedTabs);
+    updateTabsAndFiltersInDatabase(updatedTabs, accountNames, caseNumbers);
+  };
   const handleJiraIssueIdChange = (event: any) => {
     setJiraIssueId(event.target.value);
   };
@@ -164,13 +168,14 @@ const handleTabChange = (selectedTabIds: string[]) => {
       console.error('Error fetching JIRA issue:', error);
     }
   };
-  const tabIdsForVisibleTabs = selectedTabs.length > 0 ? selectedTabs.map(tab => tab.id) : undefined;
-
+  const tabIdsForVisibleTabs = selectedTabs.length > 0 ? selectedTabs.map((tab) => tab.id) : undefined;
 
   const desktopLayout = (
     <BaseRow>
       <BaseCol xl={24} lg={24}>
-        <DashboardCard title={<CardHeader
+        <DashboardCard
+          title={
+            <CardHeader
               onFilterClick={() => setIsBasicModalOpen(!isBasicModalOpen)}
               selectedTabs={selectedTabs}
               handleTabChange={handleTabChange}
@@ -180,7 +185,9 @@ const handleTabChange = (selectedTabIds: string[]) => {
               isJiraModalOpen={isJiraModalOpen}
               setIsJiraModalOpen={setIsJiraModalOpen}
               jiraIssueData={jiraIssueData}
-            />}>
+            />
+          }
+        >
           <BaseModal
             title={'Filter'}
             open={isBasicModalOpen}
@@ -188,7 +195,7 @@ const handleTabChange = (selectedTabIds: string[]) => {
               setAccountNames(editAccountNames);
               setCaseNumbers(editCaseNumbers);
               setIsBasicModalOpen(false);
-              updateTabsAndFiltersInDatabase(selectedTabs, editAccountNames, editCaseNumbers );
+              updateTabsAndFiltersInDatabase(selectedTabs, editAccountNames, editCaseNumbers);
               if (embedRef.current) {
                 if (editAccountNames.length == 0 && editCaseNumbers.length > 0) {
                   embedRef.current.trigger(HostEvent.UpdateRuntimeFilters, [
@@ -257,8 +264,8 @@ const handleTabChange = (selectedTabIds: string[]) => {
                   Action.SpotIQAnalyze,
                 ]}
                 runtimeFilters={[
-                  { columnName: 'Account Name',operator: RuntimeFilterOp.EQ, values: accountNames },
-                  { columnName: 'Case Number',operator: RuntimeFilterOp.EQ, values: caseNumbers }
+                  { columnName: 'Account Name', operator: RuntimeFilterOp.EQ, values: accountNames },
+                  { columnName: 'Case Number', operator: RuntimeFilterOp.EQ, values: caseNumbers },
                 ]}
                 visibleTabs={tabIdsForVisibleTabs}
                 customizations={{
