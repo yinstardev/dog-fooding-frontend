@@ -42,11 +42,11 @@ const checkStatus = async (): Promise<Tab[]> => {
   const status = statusResponse.data.status;
 
   if (status === 'processing') {
-    console.log("Another request outgoing");
+    console.log('Another request outgoing');
     await new Promise((resolve) => setTimeout(resolve, 5000));
     return await checkStatus();
   } else if (status === 'completed') {
-    console.log("Final Response")
+    console.log('Final Response');
     return statusResponse.data.data;
   } else if (status === 'failed') {
     throw new Error('Error:', statusResponse.data.error);
