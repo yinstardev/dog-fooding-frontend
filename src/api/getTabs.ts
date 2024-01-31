@@ -2,14 +2,14 @@ import axios from 'axios';
 
 const be_url = process.env.REACT_APP_BE_URL;
 
-interface Tab {
-  id: string;
-  name: string;
-}
+// interface Tab {
+//   id: string;
+//   name: string;
+// }
 
 // const fetchAndTransformTabs = async (): Promise<Tab[]> => {
 //   try {
-//     const response = await axios.get(`${be_url}/getTabs`, { timeout: 30000 });
+//     const response = await axios.get(`${be_url}/getTabs`);
 
 //     const transformedTabs: Tab[] = response.data.tabs.tab.map((tab: any) => ({
 //       id: tab.header.guid,
@@ -45,9 +45,9 @@ const checkStatus = async (): Promise<Tab[]> => {
 
     if (status === 'processing') {
         await new Promise(resolve => setTimeout(resolve, 5000));
-        return await checkStatus(); // Recursive call
+        return await checkStatus();
     } else if (status === 'completed') {
-        return statusResponse.data.data; // Assuming this is Tab[]
+        return statusResponse.data.data;
     } else if (status === 'failed') {
         throw new Error('Error:', statusResponse.data.error);
     }

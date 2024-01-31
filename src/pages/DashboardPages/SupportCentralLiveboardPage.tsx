@@ -100,7 +100,7 @@ export const SupportCentralLiveboardPage: React.FC = () => {
         try {
             const fetchedTabs = await fetchAndTransformTabs();
             if (fetchedTabs) {
-                setTabOptions(fetchedTabs); // Update state with fetched tabs
+                setTabOptions(fetchedTabs);
             }
         } catch (error) {
             console.error('Error fetching tabs:', error);
@@ -196,7 +196,7 @@ export const SupportCentralLiveboardPage: React.FC = () => {
               style={{ minWidth: '50px' }}
               placeholder="Select tabs"
               onChange={handleTabChange}
-              value={selectedTabs.map((tab) => tab.name)}
+              value={selectedTabs.map((tab) => tab.id)}
               className="custom-multi-select"
             >
               {tabOptions?.map((option) => (
