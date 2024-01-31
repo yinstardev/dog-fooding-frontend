@@ -24,36 +24,33 @@ const be_url = process.env.REACT_APP_BE_URL;
 // };
 
 interface Tab {
-    id: string;
-    name: string;
+  id: string;
+  name: string;
 }
 
-
-
 const fetchAndTransformTabs = async () => {
-    try {
-        await axios.get(`${be_url}/getTabs`);
-        return await checkStatus();
-    } catch (error) {
-        console.error('Error initiating getTabs:', error);
-    }
+  try {
+    await axios.get(`${be_url}/getTabs`);
+    return await checkStatus();
+  } catch (error) {
+    console.error('Error initiating getTabs:', error);
+  }
 };
 
 const checkStatus = async (): Promise<Tab[]> => {
-    const statusResponse = await axios.get(`${be_url}/getStatus`);
-    const status = statusResponse.data.status;
+  const statusResponse = await axios.get(`${be_url}/getStatus`);
+  const status = statusResponse.data.status;
 
-    if (status === 'processing') {
-        await new Promise(resolve => setTimeout(resolve, 5000));
-        return await checkStatus();
-    } else if (status === 'completed') {
-        return statusResponse.data.data;
-    } else if (status === 'failed') {
-        throw new Error('Error:', statusResponse.data.error);
-    }
+  if (status === 'processing') {
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+    return await checkStatus();
+  } else if (status === 'completed') {
+    return statusResponse.data.data;
+  } else if (status === 'failed') {
+    throw new Error('Error:', statusResponse.data.error);
+  }
 
-    throw new Error('Unexpected status');
+  throw new Error('Unexpected status');
 };
-
 
 export default fetchAndTransformTabs;

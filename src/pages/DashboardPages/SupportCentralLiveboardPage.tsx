@@ -97,17 +97,17 @@ export const SupportCentralLiveboardPage: React.FC = () => {
     // getTabs();
 
     const fetchData = async () => {
-        try {
-            const fetchedTabs = await fetchAndTransformTabs();
-            if (fetchedTabs) {
-                setTabOptions(fetchedTabs);
-            }
-        } catch (error) {
-            console.error('Error fetching tabs:', error);
+      try {
+        const fetchedTabs = await fetchAndTransformTabs();
+        if (fetchedTabs) {
+          setTabOptions(fetchedTabs);
         }
+      } catch (error) {
+        console.error('Error fetching tabs:', error);
+      }
     };
 
-  fetchData();
+    fetchData();
 
     // const handleLiveboardReady = () => {
 
@@ -214,11 +214,7 @@ export const SupportCentralLiveboardPage: React.FC = () => {
   const desktopLayout = (
     <BaseRow>
       <BaseCol xl={24} lg={24}>
-        <DashboardCard
-          title={
-            <CardHeader />
-          }
-        >
+        <DashboardCard title={<CardHeader />}>
           <BaseModal
             title={'Filter'}
             open={isBasicModalOpen}
