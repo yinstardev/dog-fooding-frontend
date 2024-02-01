@@ -18,39 +18,47 @@ const getJwtTokenFromLocalStorage = () => {
   const token = localStorage.getItem('token');
   return token;
 };
-
+const setAuthHeader = () => {
+  const jwtToken = getJwtTokenFromLocalStorage();
+  const headers: { 'Content-Type': string; Authorization?: string } = {
+    'Content-Type': 'application/json'
+  };
+  if (jwtToken) {
+    headers.Authorization = `Bearer ${jwtToken}`;
+  }
+  return headers;
+};
 export const fetchUserAndToken = async () => {
   try {
     const jwtToken = getJwtTokenFromLocalStorage();
-
     const payload = parseJwt(jwtToken);
     let username = '';
 
     if (payload) {
       username = payload.username;
-      //   username = `${process.env.REACT_APP_USERNAME}`;
+      // username = `${process.env.REACT_APP_USERNAME}`;
     }
-    // new token to be added here.
+
+    const headers = setAuthHeader(); // Get headers from setAuthHeader function
+
+    const config = {
+        headers: headers, // Use headers directly
+        withCredentials: true
+    };
+
     const tokenResponse = await axios.post(
       `${be_url}/getauthtoken`,
       { username: username },
-      {
-        headers: { 'Content-Type': 'application/json' },
-        withCredentials: true,
-      },
+      config
     );
 
     const getTokenForObjectResponse = await axios.post(
       `${be_url}/getTokenForObject`,
       { username },
-      {
-        headers: { 'Content-Type': 'application/json' },
-        withCredentials: true,
-      },
+      config
     );
 
     // console.log(getTokenForObjectResponse.data.token.token, "This is token for object");
-
     // return { email: payload.username, token: getTokenForObjectResponse.data.token.token };
     return { email: payload.username, token: tokenResponse.data };
   } catch (error) {

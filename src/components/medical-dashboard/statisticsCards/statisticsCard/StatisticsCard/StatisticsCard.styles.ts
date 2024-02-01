@@ -17,6 +17,8 @@ export const Icon = styled(AntIcon)`
 `;
 
 export const StatisticCard = styled(DashboardCard)<StatisticsProps>`
+  min-width: 3em;
+  max-width: 20em;
   line-height: 1;
   overflow: hidden;
 

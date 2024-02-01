@@ -20,11 +20,20 @@ const getStatisticsColor = (value: number, prevValue: number) => {
 
 export const StatisticsCards: React.FC = () => {
   const [statistics, setStatistics] = useState<Statistic[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const { isTablet } = useResponsive();
 
   useEffect(() => {
-    getStatistics().then((res) => setStatistics(res));
+    setIsLoading(true);
+    getStatistics()
+      .then((res) => {
+        setStatistics(res);
+        setIsLoading(false);
+      })
+      .catch(() => {
+        setIsLoading(false);
+      });
   }, []);
 
   const totalValue = statistics.reduce((total, st) => st.value + total, 0);
@@ -50,6 +59,11 @@ export const StatisticsCards: React.FC = () => {
       }),
     [statistics, isTablet],
   );
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
 
   return <>{statisticsCards}</>;
 };

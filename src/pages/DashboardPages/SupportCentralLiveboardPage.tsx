@@ -163,7 +163,7 @@ export const SupportCentralLiveboardPage: React.FC = () => {
   };
 
   const handleTabChange = (selectedTabIds: string[]) => {
-    const updatedTabs = tabOptions?.filter((tab) => selectedTabIds.includes(tab.id)) || [];
+    const updatedTabs = tabOptions?.filter((tab) => selectedTabIds.includes(tab.name)) || [];
     setSelectedTabs(updatedTabs);
     updateTabsAndFiltersInDatabase(updatedTabs, accountNames, caseNumbers);
   };
@@ -196,11 +196,11 @@ export const SupportCentralLiveboardPage: React.FC = () => {
               style={{ minWidth: '50px' }}
               placeholder="Select tabs"
               onChange={handleTabChange}
-              value={selectedTabs.map((tab) => tab.id)}
+              value={selectedTabs.map((tab) => tab.name)}
               className="custom-multi-select"
             >
               {tabOptions?.map((option) => (
-                <Select.Option key={option.id} value={option.id}>
+                <Select.Option key={option.id} value={option.name}>
                   {option.name}
                 </Select.Option>
               ))}
