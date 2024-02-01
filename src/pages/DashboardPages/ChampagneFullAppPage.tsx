@@ -63,7 +63,7 @@ export const ChampagneFullAppPage: React.FC = () => {
                       variables: {
                         '--ts-var-application-color': '#000000',
                         '--ts-var-root-background': themeObject[theme].background,
-                        '--ts-var-nav-background': '#295ce1',
+                        '--ts-var-nav-background': '#4272f0',
                         '--ts-var-root-color': themeObject[theme].textDark,
                         '--ts-var-menu-color': themeObject[theme].textDark,
                         '--ts-var-search-data-button-background': themeObject[theme].textLight,

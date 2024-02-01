@@ -63,7 +63,7 @@ export const SupportCentralLiveboardPage: React.FC = () => {
   const [jiraIssueId, setJiraIssueId] = useState('');
   const [jiraIssueData, setJiraIssueData] = useState(null);
   const [isJiraModalOpen, setIsJiraModalOpen] = useState(false);
-  const [tabOptions, setTabOptions] = useState<Tab[] | undefined>(undefined);
+  const [tabOptions, setTabOptions] = useState<Tab[] | undefined>(staticTabOptions);
   const [selectedTabIds, setSelectedTabIds] = useState<string[]>([]);
   const [selectedTabs, setSelectedTabs] = useState<Tab[]>([]);
 
@@ -96,18 +96,18 @@ export const SupportCentralLiveboardPage: React.FC = () => {
 
     // getTabs();
 
-    const fetchData = async () => {
-      try {
-        const fetchedTabs = await fetchAndTransformTabs();
-        if (fetchedTabs) {
-          setTabOptions(fetchedTabs);
-        }
-      } catch (error) {
-        console.error('Error fetching tabs:', error);
-      }
-    };
+    // const fetchData = async () => {
+    //   try {
+    //     const fetchedTabs = await fetchAndTransformTabs();
+    //     if (fetchedTabs) {
+    //       setTabOptions(fetchedTabs);
+    //     }
+    //   } catch (error) {
+    //     console.error('Error fetching tabs:', error);
+    //   }
+    // };
 
-    fetchData();
+    // fetchData();
 
     // const handleLiveboardReady = () => {
 
