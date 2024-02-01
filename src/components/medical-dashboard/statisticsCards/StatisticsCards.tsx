@@ -64,6 +64,5 @@ export const StatisticsCards: React.FC = () => {
     return <div>Loading...</div>;
   }
 
-
   return <>{statisticsCards}</>;
 };

@@ -21,7 +21,7 @@ const getJwtTokenFromLocalStorage = () => {
 const setAuthHeader = () => {
   const jwtToken = getJwtTokenFromLocalStorage();
   const headers: { 'Content-Type': string; Authorization?: string } = {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
   };
   if (jwtToken) {
     headers.Authorization = `Bearer ${jwtToken}`;
@@ -42,21 +42,13 @@ export const fetchUserAndToken = async () => {
     const headers = setAuthHeader(); // Get headers from setAuthHeader function
 
     const config = {
-        headers: headers, // Use headers directly
-        withCredentials: true
+      headers: headers, // Use headers directly
+      withCredentials: true,
     };
 
-    const tokenResponse = await axios.post(
-      `${be_url}/getauthtoken`,
-      { username: username },
-      config
-    );
+    const tokenResponse = await axios.post(`${be_url}/getauthtoken`, { username: username }, config);
 
-    const getTokenForObjectResponse = await axios.post(
-      `${be_url}/getTokenForObject`,
-      { username },
-      config
-    );
+    const getTokenForObjectResponse = await axios.post(`${be_url}/getTokenForObject`, { username }, config);
 
     // console.log(getTokenForObjectResponse.data.token.token, "This is token for object");
     // return { email: payload.username, token: getTokenForObjectResponse.data.token.token };
