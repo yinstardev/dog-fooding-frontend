@@ -99,6 +99,9 @@ const getThemeVariables = (theme: ThemeType) => css`
   --avatar-bg: ${themeObject[theme].avatarBg};
   --alert-text-color: ${themeObject[theme].alertTextColor};
   --breadcrumb-color: ${themeObject[theme].breadcrumb};
+
+  --ts-embed-application-color: ${themeObject[theme].tsEmbedAppColor};
+  --ts-embed-nav-bg-color: ${themeObject[theme].tsEmbedNavBgColor}
 `;
 
 export const lightThemeVariables = css`

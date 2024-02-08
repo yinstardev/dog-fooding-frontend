@@ -45,3 +45,31 @@
   max-height: 100px; /* Adjust as needed */
   overflow-y: auto; /* Allows vertical scroll on overflow */
 }
+
+.TSEHomeRow{
+  display: flex;
+  justify-content: space-between;
+}
+
+.modalContent {
+  padding: 20px;
+}
+
+.modalHeading {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.modalSection {
+  margin-bottom: 20px;
+}
+
+.modalSubheading {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.modalText {
+  margin-left: 20px;
+}

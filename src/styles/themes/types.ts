@@ -70,4 +70,6 @@ export interface ITheme {
   breadcrumb: string;
   icon: string;
   iconHover: string;
+  tsEmbedAppColor: string;
+  tsEmbedNavBgColor: string;
 }

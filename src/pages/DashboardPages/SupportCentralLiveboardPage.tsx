@@ -7,6 +7,7 @@ import { BaseRow } from '@app/components/common/BaseRow/BaseRow';
 import { BaseCol } from '@app/components/common/BaseCol/BaseCol';
 import {
   Action,
+  EmbedEvent,
   HostEvent,
   LiveboardEmbed,
   RuntimeFilterOp,
@@ -96,18 +97,18 @@ export const SupportCentralLiveboardPage: React.FC = () => {
 
     // getTabs();
 
-    // const fetchData = async () => {
-    //   try {
-    //     const fetchedTabs = await fetchAndTransformTabs();
-    //     if (fetchedTabs) {
-    //       setTabOptions(fetchedTabs);
-    //     }
-    //   } catch (error) {
-    //     console.error('Error fetching tabs:', error);
-    //   }
-    // };
+    const fetchData = async () => {
+      try {
+        const fetchedTabs = await fetchAndTransformTabs();
+        if (fetchedTabs) {
+          setTabOptions(fetchedTabs);
+        }
+      } catch (error) {
+        console.error('Error fetching tabs:', error);
+      }
+    };
 
-    // fetchData();
+    fetchData();
 
     // const handleLiveboardReady = () => {
 
@@ -130,6 +131,17 @@ export const SupportCentralLiveboardPage: React.FC = () => {
     //     });
     //   }
     // };
+    if(embedRef.current){
+      const embedInstance = embedRef.current;
+
+      embedInstance.on(EmbedEvent.CustomAction, (payload: any) => {
+        if(payload.id == 'show-jira-details'){
+          console.log("This is payload data: ", payload.data);
+          console.log(payload.data.contextMenuPoints.clickedPoint.selectedAttributes[1].value);
+          // function to get the jira issue details. based on the scal-id
+        }
+      })
+    }
 
     // if (embedRef.current) {
     // handleLiveboardReady();
