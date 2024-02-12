@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageTitle } from '@app/components/common/PageTitle/PageTitle';
 import { useResponsive } from '@app/hooks/useResponsive';
@@ -16,6 +16,7 @@ import { TseWrapper } from '@app/components/tse-dashboard/TseWrapper';
 import { fetchUserAndToken } from '@app/api/getUserAndToken';
 import { SuperSelect } from './support-central/SuperSelect';
 import { searchData } from './support-central/searchData';
+import { useNavigate } from 'react-router-dom';
 
 type RuntimeFilter = {
   columnName: string;
@@ -28,6 +29,7 @@ const TSEHomeDashboardPage: React.FC = () => {
   const { t } = useTranslation();
   const theme = useAppSelector((state) => state.theme.theme);
   const embedRef = useEmbedRef();
+  const navigate = useNavigate();
 
   const liveboardId = '4f737ba5-aebf-4fd0-9525-c4ebdd29a51b'; // Your liveboard ID
   const [runtimeFilters, setRuntimeFilters] = useState<RuntimeFilter[]>([]);
@@ -123,6 +125,13 @@ const TSEHomeDashboardPage: React.FC = () => {
     }
   }
 
+  const handleCustomAction = useCallback( (payload: any) => {
+    if(payload.data.id == 'sfdc-detailed-view'){
+      console.log(payload.data);
+      navigate('/detailed-view-sfdc')
+    }
+  }, [navigate])
+
   const desktopLayout = (
     <BaseRow>
       <BaseCol xl={24} lg={24}>
@@ -139,7 +148,8 @@ const TSEHomeDashboardPage: React.FC = () => {
             className="support-central-liveboard-embed"
             liveboardId={liveboardId}
             runtimeFilters={runtimeFilters}
-            
+            onCustomAction={handleCustomAction}
+            // preRenderId='homepage-view'
             customizations={{
               style: {
                 customCSS: {

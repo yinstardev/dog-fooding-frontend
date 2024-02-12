@@ -18,6 +18,7 @@ import TSEHomeDashboardPage from '@app/pages/DashboardPages/TSEHomeDashboardPage
 import { SupportCentralLiveboardPage } from '@app/pages/DashboardPages/SupportCentralLiveboardPage';
 import { ChampagneFullAppPage } from '@app/pages/DashboardPages/ChampagneFullAppPage';
 import TokenHandler from './TokenHandler';
+import DetailedViewPage from '@app/pages/DashboardPages/DetailedViewSFDC';
 
 const NewsFeedPage = React.lazy(() => import('@app/pages/NewsFeedPage'));
 const DataTablesPage = React.lazy(() => import('@app/pages/DataTablesPage'));
@@ -67,6 +68,7 @@ export const TSE_HOME_PAGE_PATH = '/';
 export const MEDICAL_DASHBOARD_PATH = '/medical-dashboard';
 export const SUPPORT_CENTRAL_LIVEBOARD_PATH = '/support-central';
 export const CHAMPAGNE_FULL_APP_PATH = '/champagne';
+export const DETAILED_VIEW_SFDC = '/detailed-view-sfdc'
 
 // TSE
 const TseHomeDashboard = withLoading(TSEHomeDashboardPage);
@@ -142,7 +144,7 @@ export const AppRouter: React.FC = () => {
           <Route index element={<TseHomeDashboard />} />
           <Route path={SUPPORT_CENTRAL_LIVEBOARD_PATH} element={<SupportCentralLiveboard />} />
           <Route path={CHAMPAGNE_FULL_APP_PATH} element={<ChampagneFullApp />} />
-
+          <Route path={DETAILED_VIEW_SFDC} element={<DetailedViewPage/>} />
           <Route path="apps">
             <Route path="feed" element={<NewsFeed />} />
           </Route>
