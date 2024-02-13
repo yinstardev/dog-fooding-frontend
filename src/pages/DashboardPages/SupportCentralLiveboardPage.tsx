@@ -136,7 +136,7 @@ export const SupportCentralLiveboardPage: React.FC = () => {
 
       embedInstance.on(EmbedEvent.CustomAction, (payload: any) => {
         if(payload.id == 'show-jira-details'){
-          console.log("This is payload data: ", payload.data);
+          // console.log("This is payload data: ", payload.data);
           console.log(payload.data.contextMenuPoints.clickedPoint.selectedAttributes[1].value);
           // function to get the jira issue details. based on the scal-id
         }

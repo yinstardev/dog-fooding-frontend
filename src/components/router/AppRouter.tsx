@@ -140,11 +140,20 @@ export const AppRouter: React.FC = () => {
       <Routes>
         <Route path="server-error" element={<ServerError />} />
         <Route path="/token-handler" element={<TokenHandler />} />
+
+        <Route 
+          path={DETAILED_VIEW_SFDC} 
+          element={
+            <ProtectedRoute>
+              <DetailedViewPage />
+            </ProtectedRoute>
+          } 
+        />
         <Route path={TSE_HOME_PAGE_PATH} element={protectedLayout}>
           <Route index element={<TseHomeDashboard />} />
           <Route path={SUPPORT_CENTRAL_LIVEBOARD_PATH} element={<SupportCentralLiveboard />} />
           <Route path={CHAMPAGNE_FULL_APP_PATH} element={<ChampagneFullApp />} />
-          <Route path={DETAILED_VIEW_SFDC} element={<DetailedViewPage/>} />
+          {/* <Route path={DETAILED_VIEW_SFDC} element={<DetailedViewPage/>} /> */}
           <Route path="apps">
             <Route path="feed" element={<NewsFeed />} />
           </Route>

@@ -1,3 +1,4 @@
+import { Btn } from '@app/components/common/MoonSunSwitch/MoonSunSwitch.styles';
 import { TseWrapper } from '@app/components/tse-dashboard/TseWrapper';
 import { useAppSelector } from '@app/hooks/reduxHooks';
 import { themeObject } from '@app/styles/themes/themeVariables';
@@ -9,6 +10,8 @@ import {
   } from '@thoughtspot/visual-embed-sdk/lib/src/react';
 import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { LeftSideCol, RightSideCol } from './DashboardPage.styles';
+import { BaseRow } from '@app/components/common/BaseRow/BaseRow';
 
 
 
@@ -27,21 +30,17 @@ const DetailedViewPage = () => {
     }, [])
 
     return <>
-    <div>Hello there</div>
-        <button onClick={()=> navigate(-1)}>Click ME !!!</button>
+    <LeftSideCol style={{width:'500px', minHeight:'100vh'}}>
+        <Btn style={{margin:'1em'}} onClick={()=> navigate(-1)}>Get Back to LB</Btn>
         <TseWrapper>
             <LiveboardEmbed
                 ref={embedRef}
                 className="sfdc-list"
                 liveboardId={liveboardId}
-                // runtimeFilters={runtimeFilters}
                 onCustomAction={handleCustomAction}
                 vizId='e5506a79-70f7-4cc7-b213-001759251858'
-                // visibleVizs={['e5506a79-70f7-4cc7-b213-001759251858']}
                 hideTabPanel={true}
-                
                 hideLiveboardHeader={true}
-                // preRenderId='homepage-view'
                 customizations={{
                   style: {
                     customCSS: {
@@ -60,6 +59,9 @@ const DetailedViewPage = () => {
                 }}
             />
         </TseWrapper>
+    </LeftSideCol>
+    <RightSideCol>
+    </RightSideCol>
     </>
 }
 

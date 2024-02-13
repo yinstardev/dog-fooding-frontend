@@ -31,46 +31,10 @@ const TSEHomeDashboardPage: React.FC = () => {
   const embedRef = useEmbedRef();
   const navigate = useNavigate();
 
-  const liveboardId = '4f737ba5-aebf-4fd0-9525-c4ebdd29a51b'; // Your liveboard ID
+  const liveboardId = '4f737ba5-aebf-4fd0-9525-c4ebdd29a51b';
   const [runtimeFilters, setRuntimeFilters] = useState<RuntimeFilter[]>([]);
   const [editAccountOwnerName, setEditAccountOwnerName] = useState<string[]>([]);
   const [accountOwnerNameList, setAccountOwnerNameList] = useState<string[]>([]);
-
-  // useEffect(() => {
-  //   const fetchUserData = async () => {
-  //     try {
-  //       const {email} = await fetchUserAndToken();
-  //       if (email) {
-
-  //         const emailNamePart = email.split('@')[0];
-  //         const formattedName = emailNamePart.split('.').join(' ');
-  //         console.log(formattedName, "this is the formatted user name");
-  //         console.log(email, "this is the user email");
-  //         // Assuming 'username' is the field you want to filter on in the liveboard
-  //         // Adjust this to match the actual field name and value you need
-  //         const filter = {
-  //           columnName: 'Case Owner Name', // Adjust the column name based on your liveboard's setup
-  //           operator: RuntimeFilterOp.EQ,
-  //           values: ['azimuddin mohammed'], // Use the appropriate property from userData
-  //         };
-  //         setRuntimeFilters([filter]);
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching user data:', error);
-  //       // Handle error appropriately
-  //     }
-  //   };
-
-  //   fetchUserData();
-  //   const case_owner_name : string = 'Case Owner Name'
-
-  //   searchData({ query: '', columnName: case_owner_name }).then(([data]) => {
-  //     setAccountOwnerNameList(data);
-  //     console.log("-------------*****************______------------------")
-  //     console.log(data);
-  //   });
-
-  // }, []); // Dependency array is empty to fetch user data only once on component mount
 
   useEffect(() => {
     const fetchAndSetData = async () => {
@@ -84,11 +48,9 @@ const TSEHomeDashboardPage: React.FC = () => {
   
         setAccountOwnerNameList(data);
   
-        // Wait for the embed to be initialized
         if(embedRef.current)
           {
             if (data.includes(formattedName)) {
-              // If the user's name is in the list, apply it as a runtime filter
               embedRef.current.trigger(HostEvent.UpdateRuntimeFilters, [{
                 columnName: case_owner_name,
                 operator: RuntimeFilterOp.EQ,
@@ -96,7 +58,6 @@ const TSEHomeDashboardPage: React.FC = () => {
               }]);
               setEditAccountOwnerName([formattedName]);
             } else {
-              // If the user's name is not in the list, clear the runtime filters
               embedRef.current.trigger(HostEvent.UpdateRuntimeFilters, []);
               setEditAccountOwnerName([]);
             }
@@ -112,12 +73,11 @@ const TSEHomeDashboardPage: React.FC = () => {
   const handleSuperSelectChange = (newValues: string[]) => {
     setEditAccountOwnerName(newValues);
   
-    // Check if the embed is ready and then update the runtime filters
     if(embedRef.current)
     {
       embedRef.current.trigger(HostEvent.UpdateRuntimeFilters, [
         {
-          columnName: 'Case Owner Name', // Adjust as per your column name
+          columnName: 'Case Owner Name',
           operator: RuntimeFilterOp.EQ,
           values: newValues,
         },
@@ -127,7 +87,6 @@ const TSEHomeDashboardPage: React.FC = () => {
 
   const handleCustomAction = useCallback( (payload: any) => {
     if(payload.data.id == 'sfdc-detailed-view'){
-      console.log(payload.data);
       navigate('/detailed-view-sfdc')
     }
   }, [navigate])
