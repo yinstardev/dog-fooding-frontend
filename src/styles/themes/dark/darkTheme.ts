@@ -104,6 +104,8 @@ export const darkColorsTheme: ITheme = {
   breadcrumb: '#a9a9a9',
   icon: '#a9a9a9',
   iconHover: '#ffffff',
+  tsEmbedAppColor: '#000000',
+  tsEmbedNavBgColor: '#64748B',
   ...chartColors,
 };
 

@@ -104,5 +104,7 @@ export const lightColorsTheme: ITheme = {
   breadcrumb: 'rgba(0, 0, 0, 0.45)',
   icon: '#a9a9a9',
   iconHover: 'rgba(0, 0, 0, 0.75)',
+  tsEmbedAppColor: '#000000',
+  tsEmbedNavBgColor: '#007BFF',
   ...chartColors,
 };
