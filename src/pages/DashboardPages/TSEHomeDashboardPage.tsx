@@ -4,12 +4,7 @@ import { PageTitle } from '@app/components/common/PageTitle/PageTitle';
 import { useResponsive } from '@app/hooks/useResponsive';
 import { BaseRow } from '@app/components/common/BaseRow/BaseRow';
 import { BaseCol } from '@app/components/common/BaseCol/BaseCol';
-import {
-  LiveboardEmbed,
-  useEmbedRef,
-  RuntimeFilterOp,
-  HostEvent,
-} from '@thoughtspot/visual-embed-sdk/lib/src/react';
+import { LiveboardEmbed, useEmbedRef, RuntimeFilterOp, HostEvent } from '@thoughtspot/visual-embed-sdk/lib/src/react';
 import { useAppSelector } from '@app/hooks/reduxHooks';
 import { themeObject } from '@app/styles/themes/themeVariables';
 import { TseWrapper } from '@app/components/tse-dashboard/TseWrapper';
@@ -42,64 +37,67 @@ const TSEHomeDashboardPage: React.FC = () => {
         const { email } = await fetchUserAndToken();
         const emailNamePart = email.split('@')[0];
         const formattedName = emailNamePart.split('.').join(' ');
-  
+
         const case_owner_name = 'Case Owner Name';
         const [data] = await searchData({ query: '', columnName: case_owner_name });
-  
+
         setAccountOwnerNameList(data);
-  
-        if(embedRef.current)
-          {
-            if (data.includes(formattedName)) {
-              embedRef.current.trigger(HostEvent.UpdateRuntimeFilters, [{
+
+        if (embedRef.current) {
+          if (data.includes(formattedName)) {
+            embedRef.current.trigger(HostEvent.UpdateRuntimeFilters, [
+              {
                 columnName: case_owner_name,
                 operator: RuntimeFilterOp.EQ,
                 values: [formattedName],
-              }]);
-              setEditAccountOwnerName([formattedName]);
-            } else {
-              embedRef.current.trigger(HostEvent.UpdateRuntimeFilters, []);
-              setEditAccountOwnerName([]);
-            }
-          ;}
+              },
+            ]);
+            setEditAccountOwnerName([formattedName]);
+          } else {
+            embedRef.current.trigger(HostEvent.UpdateRuntimeFilters, []);
+            setEditAccountOwnerName([]);
+          }
+        }
       } catch (error) {
         console.error('Error setting data:', error);
       }
     };
-  
+
     fetchAndSetData();
   }, [embedRef]);
-  
+
   const handleSuperSelectChange = (newValues: string[]) => {
     setEditAccountOwnerName(newValues);
-  
-    if(embedRef.current)
-    {
+
+    if (embedRef.current) {
       embedRef.current.trigger(HostEvent.UpdateRuntimeFilters, [
         {
           columnName: 'Case Owner Name',
           operator: RuntimeFilterOp.EQ,
           values: newValues,
         },
-      ])
+      ]);
     }
-  }
+  };
 
-  const handleCustomAction = useCallback( (payload: any) => {
-    if(payload.data.id == 'sfdc-detailed-view'){
-      navigate('/detailed-view-sfdc')
-    }
-  }, [navigate])
+  const handleCustomAction = useCallback(
+    (payload: any) => {
+      if (payload.data.id == 'sfdc-detailed-view') {
+        navigate('/detailed-view-sfdc');
+      }
+    },
+    [navigate],
+  );
 
   const desktopLayout = (
     <BaseRow>
       <BaseCol xl={24} lg={24}>
-        <div style={{maxWidth:'25em', marginLeft:'1em'}}>
+        <div style={{ maxWidth: '25em', marginLeft: '1em' }}>
           <SuperSelect
-                    columnName="Case Owner Name"
-                    defaultValues={editAccountOwnerName}
-                    updateValues={handleSuperSelectChange}
-                  />
+            columnName="Case Owner Name"
+            defaultValues={editAccountOwnerName}
+            updateValues={handleSuperSelectChange}
+          />
         </div>
         <TseWrapper>
           <LiveboardEmbed

@@ -2,9 +2,9 @@ import React, { CSSProperties, ReactNode } from 'react';
 import ReactDOM from 'react-dom';
 
 interface ModalProps {
-    isOpen: boolean;
-    children: ReactNode;
-    onClose: () => void;
+  isOpen: boolean;
+  children: ReactNode;
+  onClose: () => void;
 }
 
 const modalStyle: CSSProperties = {
@@ -39,7 +39,7 @@ const closeButtonStyle: CSSProperties = {
   cursor: 'pointer',
 };
 
-const Modal: React.FC<ModalProps> = ({ isOpen, children, onClose })  => {
+const Modal: React.FC<ModalProps> = ({ isOpen, children, onClose }) => {
   if (!isOpen) return null;
 
   return ReactDOM.createPortal(
@@ -52,7 +52,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, children, onClose })  => {
         {children}
       </div>
     </>,
-    document.body
+    document.body,
   );
 };
 

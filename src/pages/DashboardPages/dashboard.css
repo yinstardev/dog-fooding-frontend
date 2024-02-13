@@ -3,7 +3,7 @@
   min-height: 700px;
 }
 
-.sfdc-list iframe{
+.sfdc-list iframe {
   min-height: 85vh;
   max-width: 600px;
 }
@@ -51,7 +51,7 @@
   overflow-y: auto; /* Allows vertical scroll on overflow */
 }
 
-.TSEHomeRow{
+.TSEHomeRow {
   display: flex;
   justify-content: space-between;
 }

@@ -101,7 +101,7 @@ const getThemeVariables = (theme: ThemeType) => css`
   --breadcrumb-color: ${themeObject[theme].breadcrumb};
 
   --ts-embed-application-color: ${themeObject[theme].tsEmbedAppColor};
-  --ts-embed-nav-bg-color: ${themeObject[theme].tsEmbedNavBgColor}
+  --ts-embed-nav-bg-color: ${themeObject[theme].tsEmbedNavBgColor};
 `;
 
 export const lightThemeVariables = css`

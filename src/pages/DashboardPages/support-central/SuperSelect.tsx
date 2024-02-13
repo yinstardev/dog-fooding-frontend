@@ -26,7 +26,7 @@ export const SuperSelect: React.FC<SuperSelectProps> = ({ columnName, defaultVal
     setSelectedValues(defaultValues || []);
     searchData({ query: '', columnName }).then(([data]) => {
       updateOptions(data);
-    //   console.log(data);
+      //   console.log(data);
     });
 
     return () => {

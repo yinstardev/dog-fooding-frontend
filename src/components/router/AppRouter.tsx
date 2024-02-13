@@ -68,7 +68,7 @@ export const TSE_HOME_PAGE_PATH = '/';
 export const MEDICAL_DASHBOARD_PATH = '/medical-dashboard';
 export const SUPPORT_CENTRAL_LIVEBOARD_PATH = '/support-central';
 export const CHAMPAGNE_FULL_APP_PATH = '/champagne';
-export const DETAILED_VIEW_SFDC = '/detailed-view-sfdc'
+export const DETAILED_VIEW_SFDC = '/detailed-view-sfdc';
 
 // TSE
 const TseHomeDashboard = withLoading(TSEHomeDashboardPage);
@@ -141,13 +141,13 @@ export const AppRouter: React.FC = () => {
         <Route path="server-error" element={<ServerError />} />
         <Route path="/token-handler" element={<TokenHandler />} />
 
-        <Route 
-          path={DETAILED_VIEW_SFDC} 
+        <Route
+          path={DETAILED_VIEW_SFDC}
           element={
             <ProtectedRoute>
               <DetailedViewPage />
             </ProtectedRoute>
-          } 
+          }
         />
         <Route path={TSE_HOME_PAGE_PATH} element={protectedLayout}>
           <Route index element={<TseHomeDashboard />} />

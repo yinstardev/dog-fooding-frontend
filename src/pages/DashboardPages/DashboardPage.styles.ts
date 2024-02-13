@@ -30,7 +30,7 @@ export const Div = styled.div`
   justify-content: space-between;
   margin: 1 em;
   padding: 1em;
-`
+`;
 
 export const ScrollWrapper = styled.div`
   overflow-y: auto;
@@ -89,10 +89,12 @@ export const StyledButton = styled.button`
   color: white;
 
   &:hover {
-    background-color: darken(#007bff, 10%); // Slightly darken the button on hover, you might need a CSS preprocessor or a function to handle this in JS
+    background-color: darken(
+      #007bff,
+      10%
+    ); // Slightly darken the button on hover, you might need a CSS preprocessor or a function to handle this in JS
   }
 `;
-
 
 export const ErrorMessage = styled.div`
   color: red; // or any color that fits your design
