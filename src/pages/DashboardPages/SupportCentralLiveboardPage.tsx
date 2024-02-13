@@ -97,18 +97,18 @@ export const SupportCentralLiveboardPage: React.FC = () => {
 
     // getTabs();
 
-    const fetchData = async () => {
-      try {
-        const fetchedTabs = await fetchAndTransformTabs();
-        if (fetchedTabs) {
-          setTabOptions(fetchedTabs);
-        }
-      } catch (error) {
-        console.error('Error fetching tabs:', error);
-      }
-    };
+    // const fetchData = async () => {
+    //   try {
+    //     const fetchedTabs = await fetchAndTransformTabs();
+    //     if (fetchedTabs) {
+    //       setTabOptions(fetchedTabs);
+    //     }
+    //   } catch (error) {
+    //     console.error('Error fetching tabs:', error);
+    //   }
+    // };
 
-    fetchData();
+    // fetchData();
 
     // const handleLiveboardReady = () => {
 
