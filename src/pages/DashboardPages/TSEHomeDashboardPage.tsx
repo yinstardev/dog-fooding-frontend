@@ -83,6 +83,7 @@ const TSEHomeDashboardPage: React.FC = () => {
   const handleCustomAction = useCallback(
     (payload: any) => {
       if (payload.data.id == 'sfdc-detailed-view') {
+        window.location.href = `${process.env.REACT_APP_BE_URL}/salesforce/oauth2/auth`;
         navigate('/detailed-view-sfdc');
       }
     },

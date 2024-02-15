@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageTitle } from '@app/components/common/PageTitle/PageTitle';
 
@@ -36,6 +36,32 @@ import { SuperSelect } from './support-central/SuperSelect';
 import { Tab } from './support-central/types';
 // import CardHeader from './support-central/CardHeader';
 import fetchAndTransformTabs from '@app/api/getTabs';
+import JiraIssueDetailsModal from './support-central/JiraIssueModal';
+
+
+interface IssueDetail {
+  key: string;
+  fields: {
+    summary: string;
+    status: {
+      name: string;
+    };
+    assignee?: {
+      displayName: string;
+    };
+    priority: {
+      name: string;
+    };
+    description: {
+      content: Array<{
+        content: Array<{
+          text: string;
+        }>;
+      }>;
+    };
+  };
+}
+
 
 const staticTabOptions: Tab[] = [
   { name: 'Goals', id: 'f897c5de-ee38-46e0-9734-d9ed5d4ecc83' },
@@ -61,7 +87,7 @@ export const SupportCentralLiveboardPage: React.FC = () => {
   const embedRef = useEmbedRef();
 
   const [isBasicModalOpen, setIsBasicModalOpen] = useState(false);
-  const [jiraIssueId, setJiraIssueId] = useState('');
+  // const [jiraIssueId, setJiraIssueId] = useState('');
   const [jiraIssueData, setJiraIssueData] = useState(null);
   const [isJiraModalOpen, setIsJiraModalOpen] = useState(false);
   const [tabOptions, setTabOptions] = useState<Tab[] | undefined>(staticTabOptions);
@@ -73,6 +99,26 @@ export const SupportCentralLiveboardPage: React.FC = () => {
 
   const [editAccountNames, setEditAccountNames] = useState<string[]>([]);
   const [editCaseNumbers, setEditCaseNumbers] = useState<string[]>([]);
+
+  const [ issueId, setIssueId ] = useState('');
+  const [issueDetails, setIssueDetails] = useState<IssueDetail | null>(null);
+  // const [ isModalOpen, setIsModalOpen ] = useState(false);
+  const [showError, setShowError] = useState(false);
+  // const [jiraIssueId, setJiraIssueId] = useState<string | null>(null);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [jiraIssueId, setJiraIssueId] = useState<string | null>(null);
+  const [jiraIssueDetails, setJiraIssueDetails] = useState<IssueDetail | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleCustomAction = useCallback((payload: any) => {
+    if (payload.data.id === 'show-jira-details') {
+        const issueId = payload.data.contextMenuPoints.clickedPoint.selectedAttributes[1].value;
+        setJiraIssueId(issueId);
+        setIsModalOpen(true);
+    }
+}, []);
 
   useEffect(() => {
     const fetchFiltersAndTabs = async () => {
@@ -160,6 +206,32 @@ export const SupportCentralLiveboardPage: React.FC = () => {
     //   }
     // };
   }, []);
+
+  const fetchJiraIssueDetails = useCallback(async (jiraIssueId: string) => {
+    if (!jiraIssueId.trim()) {
+      setShowError(true);
+      setIssueDetails(null);
+      setIsModalOpen(false);
+      return;
+    }
+
+    setShowError(false);
+  
+    try {
+      const apiResponse = await axios.get(`${process.env.REACT_APP_BE_URL}/jira/issue/${jiraIssueId}`);
+      setIssueDetails(apiResponse.data);
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error(error);
+      setIsModalOpen(false);
+    }
+  },[]);
+
+  const closeModal = useCallback(() => {
+    setIsModalOpen(false);
+    setJiraIssueId(null); // Reset JiraIssueId if necessary
+}, []);
+
 
   const updateTabsAndFiltersInDatabase = async (
     updatedTabs: Tab[],
@@ -295,6 +367,7 @@ export const SupportCentralLiveboardPage: React.FC = () => {
                   Action.SyncToSheets,
                   Action.ManagePipelines,
                 ]}
+                onCustomAction={handleCustomAction}
                 disabledActions={[
                   Action.DownloadAsPdf,
                   Action.ExportTML,
@@ -327,6 +400,12 @@ export const SupportCentralLiveboardPage: React.FC = () => {
             </TseWrapper>
           </BaseCol>
         </DashboardCard>
+        {isModalOpen && jiraIssueId && (
+                <JiraIssueDetailsModal
+                    jiraIssueId={jiraIssueId}
+                    isOpen={isModalOpen}
+                    onClose={closeModal}
+                />)}
       </BaseCol>
     </BaseRow>
   );

@@ -109,3 +109,58 @@ export const FormContainer = styled.div`
   gap: 10px;
   margin-top: 20px;
 `;
+
+export const SFDCList = styled.div`
+padding: 1em;
+color: black;
+width: 500px;
+height: 100vh;
+overflow-y: auto;
+`
+
+export const ResultItem = styled.div`
+  padding: 0.3em;
+  &:hover {
+    background-color: red; // Adds a hover effect for each item
+  }
+`;
+
+export const SelectPriority = styled.select`
+
+&.ant-select-borderless {
+  background: var(--secondary-background-color);
+
+}
+
+.ant-select-selection-placeholder {
+
+  color: var(--text-main-color);
+}
+
+.ant-select-arrow {
+  color: var(--text-main-color);
+}
+
+&.ant-select-multiple.ant-select-sm .ant-select-selection-item {
+  height: 0.875rem;
+  margin-top: 0.1875rem;
+  margin-bottom: 0.1875rem;
+}
+
+&.ant-select-disabled.ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  color: var(--disabled-color);
+}
+
+.ant-select-clear {
+  color: var(--disabled-color);
+}
+.ant-select-selection-item-remove {
+  color: var(--icon-color);
+  &:hover {
+    color: var(--icon-hover-color);
+  }
+}
+.ant-select-item-option-disabled {
+  color: var(--disabled-color);
+}
+`
