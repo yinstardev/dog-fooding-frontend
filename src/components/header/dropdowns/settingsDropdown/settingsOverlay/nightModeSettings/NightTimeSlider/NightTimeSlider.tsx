@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { createComponent } from '@lit-labs/react';
-import { RoundSlider } from 'round-slider';
 import { hToMS, msToH } from '@app/utils/utils';
 import * as S from './NightTimeSlider.styles';
 
@@ -11,10 +10,6 @@ interface NightTimeSliderProps {
   setNightTime: (nightTime: number[]) => void;
 }
 
-const RoundSliderComponent = createComponent(React, 'round-slider', RoundSlider, {
-  onValueChanged: 'value-changed',
-  onChange: 'value-changing',
-});
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const handleSlider = (event: any, onLow: (value: number) => void, onHigh: (value: number) => void) => {
@@ -40,24 +35,6 @@ export const NightTimeSlider: React.FC<NightTimeSliderProps> = ({ from, to, setN
   return (
     <>
       <S.Wrapper>
-        <RoundSliderComponent
-          min={0}
-          max={23}
-          handleSize={12}
-          step={1}
-          arcLength={360}
-          startAngle={-90}
-          low={fromValue}
-          high={toValue}
-          onChange={(event) => handleSlider(event, setFromValue, setToValue)}
-          onValueChanged={(event) =>
-            handleSlider(
-              event,
-              (value) => setNightTime([hToMS(value), to]),
-              (value) => setNightTime([from, hToMS(value)]),
-            )
-          }
-        />
         <S.ShadowWrapper />
 
         <S.BackgroundWrapper>
