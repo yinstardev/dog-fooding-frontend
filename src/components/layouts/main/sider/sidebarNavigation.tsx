@@ -42,6 +42,6 @@ export const sidebarNavigation: SidebarNavigationItem[] = [
   {
     title: 'SFDC Cases',
     key: 'sfdc-view',
-    url: '/details-view-sfdc'
-  }
+    url: '/details-view-sfdc',
+  },
 ];

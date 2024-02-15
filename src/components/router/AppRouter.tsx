@@ -156,13 +156,13 @@ export const AppRouter: React.FC = () => {
           <Route path={SUPPORT_CENTRAL_LIVEBOARD_PATH} element={<SupportCentralLiveboard />} />
           <Route path={CHAMPAGNE_FULL_APP_PATH} element={<ChampagneFullApp />} />
           <Route
-          path={DETAILS_VIEW_SFDC}
-          element={
-            <ProtectedRoute>
-              <DetailsViewPage />
-            </ProtectedRoute>
-          }
-        />
+            path={DETAILS_VIEW_SFDC}
+            element={
+              <ProtectedRoute>
+                <DetailsViewPage />
+              </ProtectedRoute>
+            }
+          />
           {/* <Route path={DETAILED_VIEW_SFDC} element={<DetailedViewPage/>} /> */}
           <Route path="apps">
             <Route path="feed" element={<NewsFeed />} />

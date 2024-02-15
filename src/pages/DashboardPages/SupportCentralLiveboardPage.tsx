@@ -38,7 +38,6 @@ import { Tab } from './support-central/types';
 import fetchAndTransformTabs from '@app/api/getTabs';
 import JiraIssueDetailsModal from './support-central/JiraIssueModal';
 
-
 interface IssueDetail {
   key: string;
   fields: {
@@ -61,7 +60,6 @@ interface IssueDetail {
     };
   };
 }
-
 
 const staticTabOptions: Tab[] = [
   { name: 'Goals', id: 'f897c5de-ee38-46e0-9734-d9ed5d4ecc83' },
@@ -100,7 +98,7 @@ export const SupportCentralLiveboardPage: React.FC = () => {
   const [editAccountNames, setEditAccountNames] = useState<string[]>([]);
   const [editCaseNumbers, setEditCaseNumbers] = useState<string[]>([]);
 
-  const [ issueId, setIssueId ] = useState('');
+  const [issueId, setIssueId] = useState('');
   const [issueDetails, setIssueDetails] = useState<IssueDetail | null>(null);
   // const [ isModalOpen, setIsModalOpen ] = useState(false);
   const [showError, setShowError] = useState(false);
@@ -114,11 +112,11 @@ export const SupportCentralLiveboardPage: React.FC = () => {
 
   const handleCustomAction = useCallback((payload: any) => {
     if (payload.data.id === 'show-jira-details') {
-        const issueId = payload.data.contextMenuPoints.clickedPoint.selectedAttributes[1].value;
-        setJiraIssueId(issueId);
-        setIsModalOpen(true);
+      const issueId = payload.data.contextMenuPoints.clickedPoint.selectedAttributes[1].value;
+      setJiraIssueId(issueId);
+      setIsModalOpen(true);
     }
-}, []);
+  }, []);
 
   useEffect(() => {
     const fetchFiltersAndTabs = async () => {
@@ -216,7 +214,7 @@ export const SupportCentralLiveboardPage: React.FC = () => {
     }
 
     setShowError(false);
-  
+
     try {
       const apiResponse = await axios.get(`${process.env.REACT_APP_BE_URL}/jira/issue/${jiraIssueId}`);
       setIssueDetails(apiResponse.data);
@@ -225,13 +223,12 @@ export const SupportCentralLiveboardPage: React.FC = () => {
       console.error(error);
       setIsModalOpen(false);
     }
-  },[]);
+  }, []);
 
   const closeModal = useCallback(() => {
     setIsModalOpen(false);
     setJiraIssueId(null); // Reset JiraIssueId if necessary
-}, []);
-
+  }, []);
 
   const updateTabsAndFiltersInDatabase = async (
     updatedTabs: Tab[],
@@ -401,11 +398,8 @@ export const SupportCentralLiveboardPage: React.FC = () => {
           </BaseCol>
         </DashboardCard>
         {isModalOpen && jiraIssueId && (
-                <JiraIssueDetailsModal
-                    jiraIssueId={jiraIssueId}
-                    isOpen={isModalOpen}
-                    onClose={closeModal}
-                />)}
+          <JiraIssueDetailsModal jiraIssueId={jiraIssueId} isOpen={isModalOpen} onClose={closeModal} />
+        )}
       </BaseCol>
     </BaseRow>
   );

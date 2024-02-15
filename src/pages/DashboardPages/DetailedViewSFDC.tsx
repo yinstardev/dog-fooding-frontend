@@ -10,36 +10,33 @@ import { BaseRow } from '@app/components/common/BaseRow/BaseRow';
 import advancedSearchData from '@app/api/AdvancedSearchApi';
 
 const extractCaseDetails = (casePriority: any) => {
-    if (!casePriority) {
-        // Return a default or null object if casePriority is undefined or null
-      return casePriority;
-    }
-  
-    const match = casePriority.match(/\{caption\}(\d+)\{\/caption\}(.+)/);
-    return match ? { caseNumber: match[1], link: match[2] } : null;
-  };
-  
+  if (!casePriority) {
+    // Return a default or null object if casePriority is undefined or null
+    return casePriority;
+  }
+
+  const match = casePriority.match(/\{caption\}(\d+)\{\/caption\}(.+)/);
+  return match ? { caseNumber: match[1], link: match[2] } : null;
+};
 
 interface AdvancedSearchDataParam {
-    caseOwnerName: string[]; // An array of case owner names to include in the search query
-    caseNumber?: string;     // An optional case number to refine the search
-    casePriority?: string;   // An optional case priority to refine the search
-  }
-  const searchParams = {
-    caseOwnerName: ["azimuddin mohammed"],
-    casePriority: "p0"
-  };
-  interface SearchResultItem {
-    caseOwnerName: string;
-    caseNumber: string;
-    casePriority: string;
-  };
-  
+  caseOwnerName: string[]; // An array of case owner names to include in the search query
+  caseNumber?: string; // An optional case number to refine the search
+  casePriority?: string; // An optional case priority to refine the search
+}
+const searchParams = {
+  caseOwnerName: ['azimuddin mohammed'],
+  casePriority: 'p0',
+};
+interface SearchResultItem {
+  caseOwnerName: string;
+  caseNumber: string;
+  casePriority: string;
+}
 
 const DetailedViewPage = () => {
-
   const [searchResults, setSearchResults] = useState<SearchResultItem[]>([]);
-  const [selectedItem, setSelectedItem] = useState<SearchResultItem | null>(null); 
+  const [selectedItem, setSelectedItem] = useState<SearchResultItem | null>(null);
   const navigate = useNavigate();
   const embedRef = useEmbedRef();
   const liveboardId = '4f737ba5-aebf-4fd0-9525-c4ebdd29a51b';
@@ -81,12 +78,11 @@ const DetailedViewPage = () => {
     }
   };
 
-//   const initiateSalesforceAuth = async () => {
-//     window.location.href = `${process.env.REACT_APP_BE_URL}/salesforce/oauth2/auth`;
-//   };
+  //   const initiateSalesforceAuth = async () => {
+  //     window.location.href = `${process.env.REACT_APP_BE_URL}/salesforce/oauth2/auth`;
+  //   };
 
-
-const handleSearch = async () => {
+  const handleSearch = async () => {
     try {
       // Assuming advancedSearchData returns an array of SearchResultItem
       // You might need to adjust this based on the actual return type of advancedSearchData
@@ -139,23 +135,25 @@ const handleSearch = async () => {
             }}
           />
         </TseWrapper> */}
-        <div style={{backgroundColor:'blue', padding: '0.5em'}}>
-        {searchResults.map((item, index) => {
-          const details = extractCaseDetails(item.caseNumber);
-          return details ? (
-            <ResultItem key={index}>
-              <span style={{cursor: 'pointer'}} onClick={() => window.open(details.link, "_blank")}>{details.caseNumber}</span>
-              <span style={{marginLeft:'1.2em'}}>{item.caseOwnerName}</span>
-              <span>{item.casePriority}</span>
-            </ResultItem>
-          ) : null;
-        })}
-      </div>
-      <Btn style={{ margin: '1em' }} onClick={handleCreateCase}>
-            Create Case
+        <div style={{ backgroundColor: 'blue', padding: '0.5em' }}>
+          {searchResults.map((item, index) => {
+            const details = extractCaseDetails(item.caseNumber);
+            return details ? (
+              <ResultItem key={index}>
+                <span style={{ cursor: 'pointer' }} onClick={() => window.open(details.link, '_blank')}>
+                  {details.caseNumber}
+                </span>
+                <span style={{ marginLeft: '1.2em' }}>{item.caseOwnerName}</span>
+                <span>{item.casePriority}</span>
+              </ResultItem>
+            ) : null;
+          })}
+        </div>
+        <Btn style={{ margin: '1em' }} onClick={handleCreateCase}>
+          Create Case
         </Btn>
         <Btn style={{ margin: '1em' }} onClick={handleSearch}>
-            SearchData
+          SearchData
         </Btn>
       </LeftSideCol>
     </>

@@ -6,11 +6,15 @@ interface AdvancedSearchDataParam {
   caseOwnerName: string[];
   caseNumber?: string;
   casePriority?: string;
-//   caseSubject?: string;
-//   caseSFDCUrl?: string;
+  //   caseSubject?: string;
+  //   caseSFDCUrl?: string;
 }
 
-const advancedSearchData = async ({ caseOwnerName, caseNumber, casePriority }: AdvancedSearchDataParam): Promise<[any[], any]> => {
+const advancedSearchData = async ({
+  caseOwnerName,
+  caseNumber,
+  casePriority,
+}: AdvancedSearchDataParam): Promise<[any[], any]> => {
   let result = [];
   let error = null;
 
@@ -22,20 +26,20 @@ const advancedSearchData = async ({ caseOwnerName, caseNumber, casePriority }: A
     Accept: 'application/json',
   };
 
-  let queryParts = caseOwnerName.map(name => `[Case Owner Name] = '${name}'`).join(' or ');
-//   if (caseNumber) {
-//     queryParts += ` [Case Number] = '${caseNumber}'`;
-//   }else{
-//     queryParts += ` [Case Number]`;
-//   }
+  let queryParts = caseOwnerName.map((name) => `[Case Owner Name] = '${name}'`).join(' or ');
+  //   if (caseNumber) {
+  //     queryParts += ` [Case Number] = '${caseNumber}'`;
+  //   }else{
+  //     queryParts += ` [Case Number]`;
+  //   }
   if (casePriority) {
     queryParts += ` [Case Priority] = '${casePriority}'`;
-  } else{
+  } else {
     queryParts += ` [Case Priority]`;
   }
   queryParts += ` [Case Subject]`;
   queryParts += ` [Case SFDC Url]`;
-  queryParts += ` [Case Status] = 'open'`
+  queryParts += ` [Case Status] = 'open'`;
 
   const data = {
     query_string: queryParts,

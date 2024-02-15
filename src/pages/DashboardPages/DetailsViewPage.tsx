@@ -11,37 +11,33 @@ import advancedSearchData from '@app/api/AdvancedSearchApi';
 import { Select } from 'antd';
 const { Option } = Select;
 
-
 const extractCaseDetails = (casePriority: any) => {
-    if (!casePriority) {
-        // Return a default or null object if casePriority is undefined or null
-      return casePriority;
-    }
-  
-    const match = casePriority.match(/\{caption\}(\d+)\{\/caption\}(.+)/);
-    return match ? { caseNumber: match[1], link: match[2] } : null;
-  };
-  
+  if (!casePriority) {
+    // Return a default or null object if casePriority is undefined or null
+    return casePriority;
+  }
+
+  const match = casePriority.match(/\{caption\}(\d+)\{\/caption\}(.+)/);
+  return match ? { caseNumber: match[1], link: match[2] } : null;
+};
 
 interface AdvancedSearchDataParam {
-    caseOwnerName: string[]; // An array of case owner names to include in the search query
-    caseNumber?: string;     // An optional case number to refine the search
-    casePriority?: string;   // An optional case priority to refine the search
-  }
-  const searchParams = {
-    caseOwnerName: ["azimuddin mohammed"],
-  };
-  interface SearchResultItem {
-    casePriority: string;
-    caseSubject: string;
-    caseSFDCUrl: string;
-  };
-  
+  caseOwnerName: string[]; // An array of case owner names to include in the search query
+  caseNumber?: string; // An optional case number to refine the search
+  casePriority?: string; // An optional case priority to refine the search
+}
+const searchParams = {
+  caseOwnerName: ['azimuddin mohammed'],
+};
+interface SearchResultItem {
+  casePriority: string;
+  caseSubject: string;
+  caseSFDCUrl: string;
+}
 
 const DetailsViewPage = () => {
-
   const [searchResults, setSearchResults] = useState<SearchResultItem[]>([]);
-  const [selectedItem, setSelectedItem] = useState<SearchResultItem | null>(null); 
+  const [selectedItem, setSelectedItem] = useState<SearchResultItem | null>(null);
   const [allSearchResults, setAllSearchResults] = useState<SearchResultItem[]>([]);
   const [selectedPriority, setSelectedPriority] = useState<string>('All');
 
@@ -54,16 +50,14 @@ const DetailsViewPage = () => {
   const searchURLParam = new URLSearchParams(location.search);
   const status = searchURLParam.get('status');
 
-  useEffect(
-        ()=> {
-            if(status !== 'success') {
-                const authUrl = `${process.env.REACT_APP_BE_URL}/salesforce/oauth2/auth`;
-                window.location.href = authUrl;
-            }else{
-                handleSearch();
-            }
-        }
-    , [status])
+  useEffect(() => {
+    if (status !== 'success') {
+      const authUrl = `${process.env.REACT_APP_BE_URL}/salesforce/oauth2/auth`;
+      window.location.href = authUrl;
+    } else {
+      handleSearch();
+    }
+  }, [status]);
 
   const handleCustomAction = useCallback((paylod: any) => {
     if (paylod.data.id == 'sfdc-detailed-view') {
@@ -101,16 +95,18 @@ const DetailsViewPage = () => {
     }
   };
 
-//   const initiateSalesforceAuth = async () => {
-//     window.location.href = `${process.env.REACT_APP_BE_URL}/salesforce/oauth2/auth`;
-//   };
+  //   const initiateSalesforceAuth = async () => {
+  //     window.location.href = `${process.env.REACT_APP_BE_URL}/salesforce/oauth2/auth`;
+  //   };
 
-
-const handleSearch = async () => {
+  const handleSearch = async () => {
     try {
       // Assuming advancedSearchData returns an array of SearchResultItem
       // You might need to adjust this based on the actual return type of advancedSearchData
-      const [data, error] = await advancedSearchData({ ...searchParams, casePriority: selectedPriority !== 'All' ? selectedPriority : undefined });
+      const [data, error] = await advancedSearchData({
+        ...searchParams,
+        casePriority: selectedPriority !== 'All' ? selectedPriority : undefined,
+      });
       console.log(data);
       if (error) {
         console.error('Error fetching search data:', error);
@@ -122,7 +118,7 @@ const handleSearch = async () => {
       setSearchResults(data); // Assuming 'data' is of type SearchResultItem[]
     } catch (error) {
       console.error('Error fetching search data:', error);
-    }    
+    }
   };
   const filterResults = (data: any) => {
     if (selectedPriority === 'All') {
@@ -130,7 +126,8 @@ const handleSearch = async () => {
     } else {
       const filteredData = data.filter((item: any) => item.casePriority === selectedPriority);
       setSearchResults(filteredData);
-    }}
+    }
+  };
   const handleSelectItem = (item: any) => {
     setSelectedItem(item);
   };
@@ -138,18 +135,19 @@ const handleSearch = async () => {
     filterResults(allSearchResults);
   }, [selectedPriority, allSearchResults]);
 
-
   return (
-    <div style={{display:'flex'}}>
+    <div style={{ display: 'flex' }}>
       <LeftSideCol style={{ width: '500px', minHeight: '100vh' }}>
-      <div style={{ margin: '1em' }}>
-          <label style={{marginRight:'1.1em'}} htmlFor="prioritySelect">Filter by Priority:</label>
+        <div style={{ margin: '1em' }}>
+          <label style={{ marginRight: '1.1em' }} htmlFor="prioritySelect">
+            Filter by Priority:
+          </label>
           <Select
-                id="prioritySelect"
-                value={selectedPriority}
-                style={{ width: 200 }} // You can adjust the width as needed
-                onChange={(value) => setSelectedPriority(value)} // Directly use value
-                >
+            id="prioritySelect"
+            value={selectedPriority}
+            style={{ width: 200 }} // You can adjust the width as needed
+            onChange={(value) => setSelectedPriority(value)} // Directly use value
+          >
             <Option value="All">All Priorities</Option>
             <Option value="P0">P0</Option>
             <Option value="P1">P1</Option>
@@ -159,28 +157,32 @@ const handleSearch = async () => {
           </Select>
         </div>
         <div style={{ backgroundColor: 'inherit', padding: '0.5em' }}>
-            {searchResults.map((item, index) => {
-                const details = extractCaseDetails(item.caseSFDCUrl);
-                return (
-                <div onClick={() => handleSelectItem(item)} style={{backgroundColor:'#5b61a8', borderRadius: '5px', padding:'0.1em', marginBottom: '0.8em'}} key={index}>
-                    {details ? (
-                    <div style={{  paddingLeft: '0.5em', marginBottom: '0.5em' }}>
-                        <span style={{ cursor: 'pointer' }} onClick={() => window.open(details.link, "_blank")}>{details.caseNumber}</span>
-                        <span style={{ marginLeft: '1.2em', marginRight: '1.2em' }}>{item.casePriority}</span>
-                        <span style={{ width: 'inherit', display:'flex'}}>{item.caseSubject}</span>
-                    </div>
-                    ) : null}
-                </div>
-                );
-            })}
+          {searchResults.map((item, index) => {
+            const details = extractCaseDetails(item.caseSFDCUrl);
+            return (
+              <div
+                onClick={() => handleSelectItem(item)}
+                style={{ backgroundColor: '#5b61a8', borderRadius: '5px', padding: '0.1em', marginBottom: '0.8em' }}
+                key={index}
+              >
+                {details ? (
+                  <div style={{ paddingLeft: '0.5em', marginBottom: '0.5em' }}>
+                    <span style={{ cursor: 'pointer' }} onClick={() => window.open(details.link, '_blank')}>
+                      {details.caseNumber}
+                    </span>
+                    <span style={{ marginLeft: '1.2em', marginRight: '1.2em' }}>{item.casePriority}</span>
+                    <span style={{ width: 'inherit', display: 'flex' }}>{item.caseSubject}</span>
+                  </div>
+                ) : null}
+              </div>
+            );
+          })}
         </div>
-      <Btn style={{ margin: '1em' }} onClick={handleCreateCase}>
-            Create Case
+        <Btn style={{ margin: '1em' }} onClick={handleCreateCase}>
+          Create Case
         </Btn>
       </LeftSideCol>
-      <div>
-        Hi there Timere
-      </div>
+      <div>Hi there Timere</div>
     </div>
   );
 };
