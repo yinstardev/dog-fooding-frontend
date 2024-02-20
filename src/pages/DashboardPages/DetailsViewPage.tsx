@@ -303,14 +303,11 @@ const DetailsViewPage = () => {
       />
     );
   }, [vizId, runtimeFilters, theme]);
-  
 
   return (
     <div style={{ display: 'flex' }}>
       <LeftSideCol className="LeftSideListView" style={{ width: '700px', minHeight: '100%' }}>
-        <TseWrapper>
-          {liveboardEmbedComponent}
-        </TseWrapper>
+        <TseWrapper>{liveboardEmbedComponent}</TseWrapper>
       </LeftSideCol>
       <div style={{ display: 'flex', width: '100%' }}>
         {/* <div id="lightningOutApp" style={{ flexGrow: 1, minHeight: '100vh', minWidth:'inherit' }}> */}
