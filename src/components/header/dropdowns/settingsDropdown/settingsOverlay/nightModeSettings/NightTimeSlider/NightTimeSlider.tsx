@@ -10,7 +10,6 @@ interface NightTimeSliderProps {
   setNightTime: (nightTime: number[]) => void;
 }
 
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const handleSlider = (event: any, onLow: (value: number) => void, onHigh: (value: number) => void) => {
   const entries = event.detail && Object.entries(event.detail)[0];

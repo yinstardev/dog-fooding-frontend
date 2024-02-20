@@ -3,6 +3,15 @@
   min-height: 700px;
 }
 
+.tse-homepage-style {
+  min-height: 700px;
+}
+
+.detailed-view iframe,
+.detailed-view {
+  height: 95%;
+}
+
 .sfdc-list iframe {
   min-height: 85vh;
   max-width: 600px;

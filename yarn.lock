@@ -2779,9 +2779,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@thoughtspot/visual-embed-sdk@npm:^1.26.3":
-  version: 1.26.3
-  resolution: "@thoughtspot/visual-embed-sdk@npm:1.26.3"
+"@thoughtspot/visual-embed-sdk@npm:1.26.7":
+  version: 1.26.7
+  resolution: "@thoughtspot/visual-embed-sdk@npm:1.26.7"
   dependencies:
     algoliasearch: ^4.10.5
     classnames: ^2.3.1
@@ -2799,7 +2799,7 @@ __metadata:
   peerDependencies:
     react: "> 16.8.0"
     react-dom: "> 16.8.0"
-  checksum: bf988686a6b17a7076b9fbaa30a918682fb53d9948cfd06d9138c1c0237ca5d77e179922e6108d8b13977e57ff3019a52d66a559ad9e340a8d27800765c30883
+  checksum: fe647eb7a94f5802d5773dae6b90a1c6ded7807d4964dc6eacd897855eca077808c04ed8a16e00d0e54ac84e977abb34c15f6f638a1a74e754d968203a13bce0
   languageName: node
   linkType: hard
 
@@ -11667,7 +11667,7 @@ __metadata:
     "@lit-labs/react": ^1.0.2
     "@react-google-maps/api": ^2.18.1
     "@reduxjs/toolkit": ^1.7.1
-    "@thoughtspot/visual-embed-sdk": ^1.26.3
+    "@thoughtspot/visual-embed-sdk": 1.26.7
     "@types/country-list": ^2.1.0
     "@types/leaflet": ^1.7.9
     "@types/react": ^18.0.28

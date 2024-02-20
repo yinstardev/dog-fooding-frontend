@@ -22,6 +22,7 @@ const doInit = createAsyncThunk('tse/doInit', async (_, { dispatch }) => {
     init({
       thoughtSpotHost: initialState.host,
       authType: AuthType.TrustedAuthTokenCookieless,
+      autoLogin: true,
       getAuthToken: async () => {
         const { token } = await fetchUserAndToken();
         if (!token) return '';
