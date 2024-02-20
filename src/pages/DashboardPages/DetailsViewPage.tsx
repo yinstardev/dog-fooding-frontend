@@ -309,47 +309,6 @@ const DetailsViewPage = () => {
     <div style={{ display: 'flex' }}>
       <LeftSideCol className="LeftSideListView" style={{ width: '700px', minHeight: '100%' }}>
         <TseWrapper>
-          {/* <LiveboardEmbed
-            ref={embedRef as any}
-            className="detailed-view"
-            liveboardId="72699018-683d-4b42-b599-1ba304beb281"
-            vizId={vizId}
-            onVizPointDoubleClick={(data: any) => {
-              handleDoubleClick(data);
-            }}
-            hiddenActions={[
-              Action.AddToFavorites,
-              Action.Edit,
-              Action.SyncToOtherApps,
-              Action.SyncToSheets,
-              Action.ManagePipelines,
-            ]}
-            onCustomAction={handleCustomAction}
-            disabledActions={[
-              Action.DownloadAsPdf,
-              Action.ExportTML,
-              Action.Share,
-              Action.RenameModalTitleDescription,
-              Action.SpotIQAnalyze,
-            ]}
-            runtimeFilters={runtimeFilters}
-            customizations={{
-              style: {
-                customCSS: {
-                  variables: {
-                    '--ts-var-application-color': themeObject[theme].background,
-                    '--ts-var-root-background': themeObject[theme].background,
-                    '--ts-var-nav-background': themeObject[theme].siderBackground,
-                  },
-                  rules_UNSTABLE: {
-                    'body > app-controller > blink-app-page > div > div > div > bk-powered-footer': {
-                      display: 'none',
-                    },
-                  },
-                },
-              },
-            }}
-          /> */}
           {liveboardEmbedComponent}
         </TseWrapper>
       </LeftSideCol>
