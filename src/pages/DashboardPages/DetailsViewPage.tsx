@@ -267,7 +267,7 @@ const DetailsViewPage = () => {
           {iframeUrl && !loading ? (
             <iframe
               id="iframeId"
-              src="https://thoughtspot--preprod.sandbox.lightning.force.com/lightning/r/Case/500VE000002GtCHYA0/view"
+              src="https://thoughtspot--preprod.sandbox.my.salesforce.com/apex/sfdc_case_view?id=500VE000002GtCHYA0"
               width="100%"
               height="95%"
               frameBorder="0"
