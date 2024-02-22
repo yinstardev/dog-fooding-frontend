@@ -85,6 +85,12 @@
   margin-bottom: 5px;
 }
 
+.modalSubSubheading {
+  font-size: 15px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
 .modalText {
   margin-left: 20px;
 }

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { BaseModal } from '@app/components/common/BaseModal/BaseModal';
 import axios from 'axios';
+import { Btn } from '@app/components/header/components/notificationsDropdown/NotificationsOverlay/NotificationsOverlay.styles';
 
 interface IssueDetail {
   key: string;
@@ -35,6 +36,9 @@ const JiraIssueDetailsModal: React.FC<JiraIssueDetailsModalProps> = ({ jiraIssue
   const [issueDetails, setIssueDetails] = useState<IssueDetail | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const jiraBaseUrl = 'https://thoughtspot.atlassian.net/browse/';
+  const issueUrl = `${jiraBaseUrl}${jiraIssueId}`;
 
   const fetchJiraIssueDetails = async () => {
     if (!jiraIssueId) return;
@@ -89,6 +93,16 @@ const JiraIssueDetailsModal: React.FC<JiraIssueDetailsModalProps> = ({ jiraIssue
             </div>
             <div className="modalText">
               {issueDetails.fields.description?.content?.[0]?.content?.[0]?.text || 'No Description Provided'}
+            </div>
+          </div>
+          <div className="modalSection">
+            <div className="modalSubSubheading">
+              <i className="priorityIcon"></i>Go to Original Issue:
+            </div>
+            <div className="modalText">
+              <Btn onClick={() => window.open(issueUrl, '_blank')} className="viewOnJiraButton">
+                Jira Issue
+              </Btn>
             </div>
           </div>
         </div>
