@@ -1,8 +1,7 @@
 import { fetchUserAndToken } from '@app/api/getUserAndToken';
 import { THOUGHTSPOT_HOST } from '@app/environment';
-import { PrepareAction, createAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { AuthStatus, AuthType } from '@thoughtspot/visual-embed-sdk';
-import { init } from '@thoughtspot/visual-embed-sdk';
+import { createAction, createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { AuthStatus, AuthType, init } from '@thoughtspot/visual-embed-sdk';
 
 export enum InitState {
   NOT_STARTED = 'NOT_STARTED',
@@ -16,7 +15,7 @@ const initialState = {
   host: THOUGHTSPOT_HOST,
 };
 
-const doInit = createAsyncThunk('tse/doInit', async (_, { dispatch }) => {
+const doInit = createAsyncThunk('tse/doInit', async (_, { dispatch, getState }) => {
   dispatch(setInitState(InitState.STARTED));
   return new Promise<void>((resolve, reject) => {
     init({
@@ -34,24 +33,24 @@ const doInit = createAsyncThunk('tse/doInit', async (_, { dispatch }) => {
         resolve();
       })
       .on(AuthStatus.FAILURE, () => {
-        dispatch(setInitState(InitState.ERROR));
-        reject();
+        const currentState = getState() as { tse: typeof initialState };
+        if (currentState.tse.initState !== InitState.FINISHED) {
+          console.log("Error, SDK Init Failure, & IsActive fail");
+          dispatch(setInitState(InitState.ERROR));
+          reject();
+        }
       });
   });
 });
 
-export const setInitState = createAction<PrepareAction<InitState>>('tse/setInitState', (initState: InitState) => {
-  return {
-    payload: initState,
-  };
-});
+export const setInitState = createAction<InitState>('tse/setInitState');
 
 export const tseSlice = createSlice({
   name: 'tse',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(setInitState, (state, action) => {
+    builder.addCase(setInitState, (state, action: PayloadAction<InitState>) => {
       state.initState = action.payload;
     });
   },

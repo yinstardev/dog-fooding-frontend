@@ -81,6 +81,7 @@ export const SupportCentralLiveboardPage: React.FC = () => {
   const { t } = useTranslation();
 
   const theme = useAppSelector((state) => state.theme.theme);
+  console.log(theme, "This is theme boy!");
 
   const embedRef = useEmbedRef();
 
@@ -405,9 +406,9 @@ export const SupportCentralLiveboardPage: React.FC = () => {
   );
 
   return (
-    <>
+    <div key = {theme}>
       <PageTitle>{t('common.support-central')}</PageTitle>
       {isDesktop ? desktopLayout : desktopLayout}
-    </>
+    </div>
   );
 };

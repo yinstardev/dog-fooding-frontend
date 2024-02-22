@@ -39,9 +39,9 @@ export const sidebarNavigation: SidebarNavigationItem[] = [
     // TODO use path variable
     url: '/champagne',
   },
-  {
-    title: 'SFDC Cases',
-    key: 'sfdc-view',
-    url: '/details-view-sfdc',
-  },
+  // {
+  //   title: 'SFDC Cases',
+  //   key: 'sfdc-view',
+  //   url: '/details-view-sfdc',
+  // },
 ];

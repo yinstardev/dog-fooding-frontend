@@ -16,9 +16,15 @@ import { BaseRow } from '@app/components/common/BaseRow/BaseRow';
 import advancedSearchData from '@app/api/AdvancedSearchApi';
 import { Select } from 'antd';
 import axios from 'axios';
-import { fetchUserAndToken } from '@app/api/getUserAndToken';
+import { fetchUserAndToken, getIframeDetails, getSessionDetailsForUser } from '@app/api/getUserAndToken';
 const { Option } = Select;
 import './dashboard.css';
+
+interface RuntimeFilter {
+  columnName: string;
+  operator: RuntimeFilterOp;
+  values: any[];
+}
 
 declare global {
   interface Window {
@@ -41,12 +47,13 @@ const DetailsViewPage = () => {
   const [searchResults, setSearchResults] = useState<SearchResultItem[]>([]);
   const [selectedItem, setSelectedItem] = useState<SearchResultItem | null>(null);
   const [allSearchResults, setAllSearchResults] = useState<SearchResultItem[]>([]);
-  const [selectedPriority, setSelectedPriority] = useState<string>('All');
+  const [selectedPriority, setSelectedPriority] = useState<PriorityLevel | null>('P0');
+  const [loading, setLoading] = useState<boolean>(false);
 
   const [selectedUsers, setSelectedUsers] = useState([]);
 
   const [vizId, setVizId] = useState('');
-  const [runtimeFilters, setRuntimeFilters] = useState([]);
+  const [runtimeFilters, setRuntimeFilters] = useState<RuntimeFilter[]>([]);
 
   const navigate = useNavigate();
   const embedRef = useEmbedRef();
@@ -60,6 +67,25 @@ const DetailsViewPage = () => {
   const status = searchURLParam.get('status');
   const salesforce_user_id = searchURLParam.get('user_id');
 
+  type PriorityLevel = 'P0' | 'P1' | 'P2' | 'P3';
+
+  const priorityToVizIdMapping: {
+    [key in PriorityLevel]: string;
+  } = {
+    P0: '301a2eee-1519-4c92-8f1c-4c18e219c13b',
+    P1: 'def91044-dd64-4ea6-94fe-d4c2d59d676b',
+    P2: '3e323c01-a43c-48d0-99a1-4ca8ce1f4904',
+    P3: '98442848-0cd8-4acd-b81b-6dd413957aae',
+  };
+
+  const handlePriorityChange = (value: PriorityLevel) => {
+    if (value in priorityToVizIdMapping) {
+      setVizId(priorityToVizIdMapping[value]);
+      setSelectedPriority(value);
+    } else {
+      console.error("Invalid priority level:", value);
+    }
+  };
   function loadScript(src: any, callback: any) {
     const script = document.createElement('script');
     script.src = src;
@@ -70,12 +96,22 @@ const DetailsViewPage = () => {
     document.head.appendChild(script);
   }
 
-  function generateIframeSrc(accessToken: any, userId: any, caseId: any) {
-    const salesforceBaseUrl = 'https://thoughtspot--preprod.sandbox.lightning.force.com';
-    const visualforcePagePath = '/apex/sfdc_case_view';
-    const iframeSrc = `${salesforceBaseUrl}${visualforcePagePath}?access_token=${accessToken}&user_id=${userId}?&id=${caseId}`;
+  const generateIframeSrc =  async (userId: any, caseId: any) =>  {
+    // const salesforceBaseUrl = 'https://thoughtspot--preprod.sandbox.lightning.force.com';
+    // const visualforcePagePath = '/apex/sfdc_case_view';
+    // const iframeSrc = `${salesforceBaseUrl}${visualforcePagePath}?access_token=${accessToken}&user_id=${userId}?&id=${caseId}`;
+    const iframeSrc = await getIframeDetails(userId,caseId);
+    console.log(iframeSrc, ": This is the iframesource");
     return iframeSrc;
   }
+
+
+  // const generateIframeSrc =  (accessToken: any, userId: any, caseId: any) =>  {
+  //   const salesforceBaseUrl = 'https://thoughtspot--preprod.sandbox.lightning.force.com';
+  //   const visualforcePagePath = '/apex/sfdc_case_view';
+  //   const iframeSrc = `${salesforceBaseUrl}${visualforcePagePath}?access_token=${accessToken}&user_id=${userId}?&id=${caseId}`;
+  //   return iframeSrc;
+  // }
 
   function getCookie(name: any) {
     const nameEQ = name + '=';
@@ -91,86 +127,147 @@ const DetailsViewPage = () => {
   const setIframSource = async (caseId: any) => {
     const userId = searchURLParam.get('user_id');
     try {
-      const response = await axios.get(`${be_url}/api/salesforce/session-details?user_id=${userId}`);
-      const { instance_url, access_token } = response.data;
-      const iframeSrc = generateIframeSrc(access_token, userId, caseId);
-      setIframeUrl(iframeSrc);
+    //   const response = await axios.get(`${be_url}/api/salesforce/session-details?user_id=${userId}`);
+      // const response = await getSessionDetailsForUser(userId);
+      // console.log("We are setting Iframe url : ",response);
+      // const { instance_url, access_token } = response;
+      // const iframeSrc = generateIframeSrc(access_token, userId, caseId);
+      // const iframeSrc = await generateIframeSrc( userId, caseId);
+      const response = await fetch(`${be_url}/api/salesforce/iframe?userId=${userId}&caseId=${caseId}`);
+      const data = await response.json();
+      const iframeUrl = data.url;
+      
+      const iframe = document.getElementById('iframeId') as HTMLIFrameElement;
+      if (iframe) {
+          iframe.src = iframeUrl;
+      }
+      setIframeUrl('iframe');
     } catch (error: any) {
       console.log(error);
     }
   };
+
+//   const checkSalesforceSession = async () => {
+//     try {
+//         const userId = searchURLParam.get('user_id');
+//         const response = await fetch(`${be_url}/api/salesforce/check-salesforce-session?userId=${userId}`);
+//         const { hasValidSession } = await response.json();
+        
+//         if (!hasValidSession) {
+//             window.location.href = `${process.env.REACT_APP_BE_URL}/salesforce/oauth2/auth`;
+//         } else {
+//             console.log("User has a valid Salesforce session. Skipping authentication.");
+//         }
+//     } catch (error) {
+//         console.error('Failed to check Salesforce session:', error);
+//     }
+// };
   useEffect(() => {
     if (status !== 'success') {
       const authUrl = `${process.env.REACT_APP_BE_URL}/salesforce/oauth2/auth`;
       window.location.href = authUrl;
     } else {
-      handleSearch();
+      console.log("User is already authenticated !");
     }
+    // checkSalesforceSession();
 
-    const storedPriority = getCookie('PriorityDetailedView');
+    const storedPriority = getCookie('PriorityDetailedView') || 'P0';
     const storedUsers = JSON.parse(getCookie('selectedUsers') || '[]');
     console.log(storedPriority, storedUsers);
-
-    switch (storedPriority) {
-      case 'P0':
-        setVizId('301a2eee-1519-4c92-8f1c-4c18e219c13b');
-        break;
-      case 'P1':
-        setVizId('def91044-dd64-4ea6-94fe-d4c2d59d676b');
-        break;
-      case 'P2':
-        setVizId('3e323c01-a43c-48d0-99a1-4ca8ce1f4904');
-        break;
-      case 'P3':
-        setVizId('98442848-0cd8-4acd-b81b-6dd413957aae');
-        break;
-      default:
-        setVizId('301a2eee-1519-4c92-8f1c-4c18e219c13b');
+    
+    if (storedPriority === null) {
+      // Handle the case where the cookie is not set
+      console.log("Priority cookie not found, setting default vizId.");
+      setVizId('301a2eee-1519-4c92-8f1c-4c18e219c13b'); // Default vizId
+    } else{
+      switch (storedPriority) {
+        case 'P0':
+          setVizId('301a2eee-1519-4c92-8f1c-4c18e219c13b');
+          break;
+        case 'P1':
+          setVizId('def91044-dd64-4ea6-94fe-d4c2d59d676b');
+          break;
+        case 'P2':
+          setVizId('3e323c01-a43c-48d0-99a1-4ca8ce1f4904');
+          break;
+        case 'P3':
+          setVizId('98442848-0cd8-4acd-b81b-6dd413957aae');
+          break;
+        default:
+          setVizId('301a2eee-1519-4c92-8f1c-4c18e219c13b');
+      }
     }
 
-    const runtimeFilters = storedUsers.map((user: any) => ({
-      columnName: 'Case Owner Name',
-      operator: RuntimeFilterOp.EQ,
-      values: [user],
-    }));
+    const isValidPriority: boolean = ['P0', 'P1', 'P2', 'P3'].includes(storedPriority);
+    console.log(isValidPriority, "Priority is valid");
+    console.log(storedPriority, typeof storedPriority);
+    if (isValidPriority) {
+      setSelectedPriority(storedPriority as PriorityLevel);
+    } else {
+      setSelectedPriority('P0');
+    }
+  
 
-    setRuntimeFilters(runtimeFilters);
+    const initialVizId = isValidPriority ? priorityToVizIdMapping[storedPriority as PriorityLevel] : priorityToVizIdMapping.P0;
+    console.log(initialVizId, "This is initial Viz Id, ", )
+    setVizId(initialVizId);
+    // setSelectedPriority(isValidPriority ? (storedPriority as PriorityLevel) : 'P0');
+
+    // const runtimeFilters = storedUsers.map((user: any) => ({
+    //   columnName: 'Case Owner Name',
+    //   operator: RuntimeFilterOp.EQ,
+    //   values: [user],
+    // }));
+    const userSpecificLB = async () => {
+      const { email } = await fetchUserAndToken();
+      const emailNamePart = email.split('@')[0];
+      const formattedName = emailNamePart.split('.').join(' ');
+
+      const case_owner_name = 'Case Owner Name';
+      const runtimeFilters = [ {
+        columnName: 'Case Owner Name',
+        operator: RuntimeFilterOp.EQ,
+        values: ['azimuddin mohammed'],
+      }];
+      setRuntimeFilters(runtimeFilters);
+    }
+    userSpecificLB();
 
     const caseId = '500VE000002GtCHYA0';
     setIframSource(caseId);
 
-    const fetchSalesforceSessionDetails = async () => {
-      const userId = searchURLParam.get('user_id');
-      const caseId = '500VE000002GtCHYA0';
-      try {
-        const response = await axios.get(`${be_url}/api/salesforce/session-details?user_id=${userId}`);
-        console.log(response.data.instance_url);
-        const { instance_url, access_token } = response.data;
-        console.log(access_token, 'This is access Token');
-        const lightningOutJsUrl = `${instance_url}/lightning/lightning.out.js`;
+    // const fetchSalesforceSessionDetails = async () => {
+    //   const userId = searchURLParam.get('user_id');
+    //   const caseId = '500VE000002GtCHYA0';
+    //   try {
+    //     const response = await axios.get(`${be_url}/api/salesforce/session-details?user_id=${userId}`);
+    //     console.log(response.data.instance_url);
+    //     const { instance_url, access_token } = response.data;
+    //     console.log(access_token, 'This is access Token');
+    //     const lightningOutJsUrl = `${instance_url}/lightning/lightning.out.js`;
 
-        loadScript(lightningOutJsUrl, () => {
-          window.$Lightning.use(
-            'c:TSE_Dogfooding_View',
-            () => {
-              console.log('Load Script Function: Inside');
-              window.$Lightning.createComponent(
-                'c:CaseDetailsEditView',
-                { recordId: '500VE000002GtCHYA0' },
-                'lightningOutApp',
-                (component: any) => {
-                  console.log('Component created:', component);
-                },
-              );
-            },
-            instance_url,
-            access_token,
-          );
-        });
-      } catch (error) {
-        console.error('Failed to load Salesforce Lightning Out:', error);
-      }
-    };
+    //     loadScript(lightningOutJsUrl, () => {
+    //       window.$Lightning.use(
+    //         'c:TSE_Dogfooding_View',
+    //         () => {
+    //           console.log('Load Script Function: Inside');
+    //           window.$Lightning.createComponent(
+    //             'c:CaseDetailsEditView',
+    //             { recordId: '500VE000002GtCHYA0' },
+    //             'lightningOutApp',
+    //             (component: any) => {
+    //               console.log('Component created:', component);
+    //             },
+    //           );
+    //         },
+    //         instance_url,
+    //         access_token,
+    //       );
+    //     });
+    //   } catch (error) {
+    //     console.error('Failed to load Salesforce Lightning Out:', error);
+    //   }
+    // };
     //   fetchSalesforceSessionDetails();
   }, [status]);
 
@@ -212,51 +309,56 @@ const DetailsViewPage = () => {
     fetchCaseDetails('00353955');
   };
 
-  const handleSearch = async () => {
-    try {
-      const [data, error] = await advancedSearchData({
-        ...searchParams,
-        casePriority: selectedPriority !== 'All' ? selectedPriority : undefined,
-      });
-      console.log(data);
-      if (error) {
-        console.error('Error fetching search data:', error);
-        return;
-      }
-      setAllSearchResults(data);
-      filterResults(data);
-      setSearchResults(data);
-    } catch (error) {
-      console.error('Error fetching search data:', error);
-    }
-  };
-  const filterResults = (data: any) => {
-    if (selectedPriority === 'All') {
-      setSearchResults(data);
-    } else {
-      const filteredData = data.filter((item: any) => item.casePriority === selectedPriority);
-      setSearchResults(filteredData);
-    }
-  };
-  const handleSelectItem = (item: any) => {
-    setSelectedItem(item);
-  };
-
-  const handleDoubleClick = (data: any) => {
+  // const handleSearch = async () => {
+  //   try {
+  //     const [data, error] = await advancedSearchData({
+  //       ...searchParams,
+  //       casePriority: selectedPriority !== 'All' ? selectedPriority : undefined,
+  //     });
+  //     console.log(data);
+  //     if (error) {
+  //       console.error('Error fetching search data:', error);
+  //       return;
+  //     }
+  //     setAllSearchResults(data);
+  //     filterResults(data);
+  //     setSearchResults(data);
+  //   } catch (error) {
+  //     console.error('Error fetching search data:', error);
+  //   }
+  // };
+  // const filterResults = (data: any) => {
+  //   if (selectedPriority === 'All') {
+  //     setSearchResults(data);
+  //   } else {
+  //     const filteredData = data.filter((item: any) => item.casePriority === selectedPriority);
+  //     setSearchResults(filteredData);
+  //   }
+  // };
+  // const handleSelectItem = (item: any) => {
+  //   setSelectedItem(item);
+  // };
+  const handleDoubleClick = async (data: any) => {
+    setLoading(true); // Start loading before fetching iframe details
+  
     const first = data.data.clickedPoint.deselectedAttributes;
     const second = data.data.clickedPoint.selectedAttributes;
     const mergedAttributes = [...first, ...second];
     const caseSfdcUrlItem = mergedAttributes.find((item) => item.column.name === 'Case Sfdc Url');
     const caseSfdcUrlValue = caseSfdcUrlItem ? caseSfdcUrlItem.value : null;
-    console.log(caseSfdcUrlValue);
-    const caseId = caseSfdcUrlValue.split('/').pop();
-    console.log(caseId);
-    setIframSource(caseId);
+  
+    if (caseSfdcUrlValue) {
+      const caseId = caseSfdcUrlValue.split('/').pop();
+      await setIframSource(caseId); // Wait for iframe source to be set
+    } else {
+      console.error("Case SFDC URL not found.");
+    }
+  
+    setLoading(false); // End loading after setting iframe source or if an error occurs
   };
-
-  useEffect(() => {
-    filterResults(allSearchResults);
-  }, [selectedPriority, allSearchResults]);
+  // useEffect(() => {
+  //   filterResults(allSearchResults);
+  // }, [selectedPriority, allSearchResults]);
 
   const liveboardEmbedComponent = useMemo(() => {
     return (
@@ -305,18 +407,32 @@ const DetailsViewPage = () => {
   }, [vizId, runtimeFilters, theme]);
 
   return (
-    <div style={{ display: 'flex' }}>
-      <LeftSideCol className="LeftSideListView" style={{ width: '700px', minHeight: '100%' }}>
+    <div key={theme} className="container-detailedview" style={{ display: 'flex' }}>
+      <LeftSideCol className="LeftSideListView" style={{ width: '700px' }}>
+        <Btn style={{ margin: '1em' }} onClick={() => navigate('/')}>
+          Get Back to LB
+        </Btn>
+        <div style={{ margin: '1em' }}>
+          <label style={{ marginRight: '1.1em' }} htmlFor="prioritySelect">
+            Filter by Priority:
+          </label>
+
+          <Select key={selectedPriority} defaultValue={selectedPriority} style={{ width: 120 }} onChange={handlePriorityChange}>
+          {Object.keys(priorityToVizIdMapping).map(priority => (
+            <Option key={priority} value={priority}>{priority}</Option>
+          ))}
+        </Select>
+        </div>
         <TseWrapper>{liveboardEmbedComponent}</TseWrapper>
       </LeftSideCol>
       <div style={{ display: 'flex', width: '100%' }}>
         {/* <div id="lightningOutApp" style={{ flexGrow: 1, minHeight: '100vh', minWidth:'inherit' }}> */}
         <div id="iframeparent" style={{ flexGrow: 1, minWidth: 'inherit' }}>
-          {iframeUrl ? (
-            <iframe src={iframeUrl} width="100%" height="95%" frameBorder="0" title="Salesforce Case Details"></iframe>
+          {(iframeUrl && !loading) ? (
+            <iframe id="iframeId" src="https://thoughtspot--preprod.sandbox.lightning.force.com/lightning/r/Case/500VE000002GtCHYA0/view" width="100%" height="95%" frameBorder="0" title="Salesforce Case Details"></iframe>
           ) : (
             <p>Loading Salesforce case details...</p>
-          )}
+          )} 
         </div>
       </div>
     </div>

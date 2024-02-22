@@ -74,6 +74,7 @@ const TSEHomeDashboardPage: React.FC = () => {
 
   const handleSuperSelectChange = (newValues: string[]) => {
     setEditAccountOwnerName(newValues);
+    console.log(newValues);
 
     if (embedRef.current) {
       embedRef.current.trigger(HostEvent.UpdateRuntimeFilters, [
@@ -133,7 +134,9 @@ const TSEHomeDashboardPage: React.FC = () => {
     setCookie('PriorityDetailedView', priority, 7);
     const priority_console = getCookie('PriorityDetailedView');
     console.log(priority_console, 'Priority Console.');
-    navigate('/details-view-sfdc');
+    const authUrl = `${process.env.REACT_APP_BE_URL}/salesforce/oauth2/auth`;
+    window.location.href = authUrl;
+    // navigate('/details-view-sfdc');
   };
 
   function setCookie(name: any, value: any, days: any) {
@@ -177,6 +180,7 @@ const TSEHomeDashboardPage: React.FC = () => {
               Action.SyncToSheets,
               Action.ManagePipelines,
             ]}
+            hideLiveboardHeader={true}
             onVizPointDoubleClick={(data: any) => {
               handleVizDoubleClick(data);
             }}
@@ -208,10 +212,10 @@ const TSEHomeDashboardPage: React.FC = () => {
   );
 
   return (
-    <>
+    <div key={theme}>
       <PageTitle>{t('common.home')}</PageTitle>
       {desktopLayout}
-    </>
+    </div>
   );
 };
 
