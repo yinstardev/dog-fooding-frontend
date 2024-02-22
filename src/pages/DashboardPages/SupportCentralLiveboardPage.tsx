@@ -81,7 +81,6 @@ export const SupportCentralLiveboardPage: React.FC = () => {
   const { t } = useTranslation();
 
   const theme = useAppSelector((state) => state.theme.theme);
-  console.log(theme, "This is theme boy!");
 
   const embedRef = useEmbedRef();
 
@@ -128,107 +127,23 @@ export const SupportCentralLiveboardPage: React.FC = () => {
 
       setEditAccountNames(filters.accountNames);
       setEditCaseNumbers(filters.caseNumbers);
-
-      console.log('Edit Account Names:', filters.accountNames);
-      console.log('Edit Case Numbers:', filters.caseNumbers);
     };
     fetchFiltersAndTabs();
 
-    // const getTabs = async () => {
-    //   const fetchedTabs = await fetchAndTransformTabs();
-    //   console.log(fetchedTabs, 'Fetched Tabs : *** !! ***');
-    //   await setTabOptions(fetchedTabs);
-    // };
-
-    // getTabs();
-
-    // const fetchData = async () => {
-    //   try {
-    //     const fetchedTabs = await fetchAndTransformTabs();
-    //     if (fetchedTabs) {
-    //       setTabOptions(fetchedTabs);
-    //     }
-    //   } catch (error) {
-    //     console.error('Error fetching tabs:', error);
-    //   }
-    // };
-
-    // fetchData();
-
-    // const handleLiveboardReady = () => {
-
-    //   const updateTabOptions = (tabs: Tab[]) => {
-    //     setTabOptions(tabs);
-    //   };
-
-    //   if (embedRef.current) {
-    //     embedRef.current?.trigger(HostEvent.GetTabs).then(data => {
-    //       console.log("Tabs data:", data);
-    //       const extractedTabs: Tab[] = data.Tabs.map((tab: any) => {
-    //         return {
-    //           id: tab.id,
-    //           name: tab.name
-    //         };
-    //       });
-    //       updateTabOptions(extractedTabs);
-    //     }).catch(error => {
-    //       console.error("Error fetching tabs:", error);
-    //     });
-    //   }
-    // };
     if (embedRef.current) {
       const embedInstance = embedRef.current;
 
       embedInstance.on(EmbedEvent.CustomAction, (payload: any) => {
         if (payload.id == 'show-jira-details') {
-          // console.log("This is payload data: ", payload.data);
-          console.log(payload.data.contextMenuPoints.clickedPoint.selectedAttributes[1].value);
-          // function to get the jira issue details. based on the scal-id
+          console.log('Custom Action is Activated now');
         }
       });
-    }
-
-    // if (embedRef.current) {
-    // handleLiveboardReady();
-    // console.log("Embed Current")
-
-    // } else {
-    //   const liveboard = document.querySelector('.support-central-liveboard-embed');
-    //   if (liveboard) {
-    //     liveboard.addEventListener('load', handleLiveboardReady);
-    //   }
-    // }
-    // return () => {
-    //   const liveboard = document.querySelector('.support-central-liveboard-embed');
-    //   if (liveboard) {
-    //     liveboard.removeEventListener('load', handleLiveboardReady);
-    //   }
-    // };
-  }, []);
-
-  const fetchJiraIssueDetails = useCallback(async (jiraIssueId: string) => {
-    if (!jiraIssueId.trim()) {
-      setShowError(true);
-      setIssueDetails(null);
-      setIsModalOpen(false);
-      return;
-    }
-
-    setShowError(false);
-
-    try {
-      const apiResponse = await axios.get(`${process.env.REACT_APP_BE_URL}/jira/issue/${jiraIssueId}`);
-      setIssueDetails(apiResponse.data);
-      setIsModalOpen(true);
-    } catch (error) {
-      console.error(error);
-      setIsModalOpen(false);
     }
   }, []);
 
   const closeModal = useCallback(() => {
     setIsModalOpen(false);
-    setJiraIssueId(null); // Reset JiraIssueId if necessary
+    setJiraIssueId(null);
   }, []);
 
   const updateTabsAndFiltersInDatabase = async (
@@ -249,20 +164,7 @@ export const SupportCentralLiveboardPage: React.FC = () => {
     setSelectedTabs(updatedTabs);
     updateTabsAndFiltersInDatabase(updatedTabs, accountNames, caseNumbers);
   };
-  const handleJiraIssueIdChange = (event: any) => {
-    setJiraIssueId(event.target.value);
-  };
-  const fetchJiraIssueData = async () => {
-    try {
-      const response = await axios.get(`/jira-issue/${jiraIssueId}`);
-      if (response.data) {
-        setJiraIssueData(response.data);
-        setIsJiraModalOpen(true);
-      }
-    } catch (error) {
-      console.error('Error fetching JIRA issue:', error);
-    }
-  };
+
   const tabIdsForVisibleTabs = selectedTabs.length > 0 ? selectedTabs.map((tab) => tab.id) : undefined;
 
   const CardHeader = () => {
@@ -406,7 +308,7 @@ export const SupportCentralLiveboardPage: React.FC = () => {
   );
 
   return (
-    <div key = {theme}>
+    <div key={theme}>
       <PageTitle>{t('common.support-central')}</PageTitle>
       {isDesktop ? desktopLayout : desktopLayout}
     </div>

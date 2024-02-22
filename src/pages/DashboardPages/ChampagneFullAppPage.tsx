@@ -87,9 +87,9 @@ export const ChampagneFullAppPage: React.FC = () => {
   );
 
   return (
-    <>
+    <div key={theme}>
       <PageTitle>{t('common.full-app-embed')}</PageTitle>
       {isDesktop ? desktopLayout : desktopLayout}
-    </>
+    </div>
   );
 };

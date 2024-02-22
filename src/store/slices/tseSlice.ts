@@ -35,7 +35,7 @@ const doInit = createAsyncThunk('tse/doInit', async (_, { dispatch, getState }) 
       .on(AuthStatus.FAILURE, () => {
         const currentState = getState() as { tse: typeof initialState };
         if (currentState.tse.initState !== InitState.FINISHED) {
-          console.log("Error, SDK Init Failure, & IsActive fail");
+          console.log('Error, SDK Init Failure, & IsActive fail');
           dispatch(setInitState(InitState.ERROR));
           reject();
         }

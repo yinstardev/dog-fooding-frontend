@@ -188,7 +188,6 @@ const TSEHomeDashboardPage: React.FC = () => {
             liveboardId={liveboardId}
             runtimeFilters={runtimeFilters}
             onCustomAction={handleCustomAction}
-            // preRenderId='homepage-view'
             customizations={{
               style: {
                 customCSS: {

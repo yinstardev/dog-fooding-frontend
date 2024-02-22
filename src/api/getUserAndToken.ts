@@ -60,7 +60,6 @@ export const fetchUserAndToken = async () => {
   }
 };
 
-
 export const getSessionDetailsForUser = async (userId: any) => {
   try {
     const jwtToken = getJwtTokenFromLocalStorage();
@@ -76,22 +75,25 @@ export const getSessionDetailsForUser = async (userId: any) => {
       headers: headers,
       withCredentials: true,
     };
-    const response = await axios.post(`${be_url}/api/salesforce/session-details?user_id=${userId}`, {username: username}, config);
+    const response = await axios.post(
+      `${be_url}/api/salesforce/session-details?user_id=${userId}`,
+      { username: username },
+      config,
+    );
     return response.data;
-  }catch(error: any) {
-    console.log(error, "Unable to fetch the Session Details");
-    return { 'access_token': 'response'};
+  } catch (error: any) {
+    console.log(error, 'Unable to fetch the Session Details');
+    return { access_token: 'response' };
   }
-}
+};
 
-
-export const getIframeDetails = async (userId: any, caseId: any)  => {
-  try{
+export const getIframeDetails = async (userId: any, caseId: any) => {
+  try {
     const jwtToken = getJwtTokenFromLocalStorage();
     const payload = parseJwt(jwtToken);
     let username = '';
 
-    if(payload) {
+    if (payload) {
       username = payload.username;
     }
 
@@ -100,12 +102,15 @@ export const getIframeDetails = async (userId: any, caseId: any)  => {
       headers: headers,
       withCredentials: true,
     };
-    const response = await axios.post(`${be_url}/api/salesforce/iframe`, {username: username,caseId: caseId, userId: userId}, config);
-    console.log("inside getIframeDetails : Function : ", response);
-    console.log(".data for the response : ", response.data);
+    const response = await axios.post(
+      `${be_url}/api/salesforce/iframe`,
+      { username: username, caseId: caseId, userId: userId },
+      config,
+    );
+    console.log('inside getIframeDetails : Function : ', response);
+    console.log('.data for the response : ', response.data);
     return response.data;
-
-  }catch(error: any) {
-    console.log(error, "unable to fetch the Iframe Details");
+  } catch (error: any) {
+    console.log(error, 'unable to fetch the Iframe Details');
   }
-}
+};
