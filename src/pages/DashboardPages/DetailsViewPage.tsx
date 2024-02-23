@@ -154,7 +154,7 @@ const DetailsViewPage = () => {
         {
           columnName: 'Case Owner Name',
           operator: RuntimeFilterOp.EQ,
-          values: [formattedName],
+          values: ['azimuddin mohammed'],
         },
       ];
       setRuntimeFilters(runtimeFilters);
