@@ -234,15 +234,14 @@ const DetailsViewPage = () => {
           <Select
             id="prioritySelect"
             value={selectedPriority}
-            style={{ width: 200 }} // You can adjust the width as needed
-            onChange={(value) => setSelectedPriority(value)} // Directly use value
+            style={{ width: 200 }}
+            onChange={(value) => setSelectedPriority(value)}
           >
             <Option value="All">All Priorities</Option>
             <Option value="P0">P0</Option>
             <Option value="P1">P1</Option>
             <Option value="P2">P2</Option>
             <Option value="P3">P3</Option>
-            {/* Add more priorities as needed */}
           </Select>
         </div>
         <div style={{ backgroundColor: 'inherit', padding: '0.5em' }}>
