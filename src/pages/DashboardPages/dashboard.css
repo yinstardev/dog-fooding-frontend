@@ -25,6 +25,13 @@
   gap: 1em;
 }
 
+.tse-jira-tickets-wait-ci-style {
+  min-height: 900px;
+}
+.tse-jira-tickets-wait-ci-style iframe {
+  min-height: 800px;
+}
+
 /* .search-container > * {
   flex: 1;
 }

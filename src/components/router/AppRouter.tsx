@@ -20,6 +20,7 @@ import { ChampagneFullAppPage } from '@app/pages/DashboardPages/ChampagneFullApp
 import TokenHandler from './TokenHandler';
 import DetailedViewPage from '@app/pages/DashboardPages/DetailedViewSFDC';
 import DetailsViewPage from '@app/pages/DashboardPages/DetailsViewPage';
+import JiraWaitingCI from '@app/pages/DashboardPages/JiraWaitingCI';
 
 const NewsFeedPage = React.lazy(() => import('@app/pages/NewsFeedPage'));
 const DataTablesPage = React.lazy(() => import('@app/pages/DataTablesPage'));
@@ -71,6 +72,7 @@ export const SUPPORT_CENTRAL_LIVEBOARD_PATH = '/support-central';
 export const CHAMPAGNE_FULL_APP_PATH = '/champagne';
 export const DETAILED_VIEW_SFDC = '/detailed-view-sfdc';
 export const DETAILS_VIEW_SFDC = '/details-view-sfdc';
+export const JIRA_WAITING_TICKETS = '/jira-wait-ci';
 
 // TSE
 const TseHomeDashboard = withLoading(TSEHomeDashboardPage);
@@ -155,6 +157,7 @@ export const AppRouter: React.FC = () => {
           <Route index element={<TseHomeDashboard />} />
           <Route path={SUPPORT_CENTRAL_LIVEBOARD_PATH} element={<SupportCentralLiveboard />} />
           <Route path={CHAMPAGNE_FULL_APP_PATH} element={<ChampagneFullApp />} />
+          <Route path={JIRA_WAITING_TICKETS} element={<JiraWaitingCI />} />
           <Route
             path={DETAILS_VIEW_SFDC}
             element={

@@ -18,6 +18,8 @@ import { fetchUserAndToken } from '@app/api/getUserAndToken';
 import { SuperSelect } from './support-central/SuperSelect';
 import { searchData } from './support-central/searchData';
 import { json, useNavigate } from 'react-router-dom';
+import JiraIssueDetailsModal from './support-central/JiraIssueModal';
+import advancedSearchData from '@app/api/AdvancedSearchApi';
 
 type RuntimeFilter = {
   columnName: string;
@@ -25,7 +27,7 @@ type RuntimeFilter = {
   values: string[];
 };
 
-const TSEHomeDashboardPage: React.FC = () => {
+const JiraWaitingCI: React.FC = () => {
   const { isTablet, isDesktop } = useResponsive();
   const { t } = useTranslation();
   const theme = useAppSelector((state) => state.theme.theme);
@@ -36,6 +38,14 @@ const TSEHomeDashboardPage: React.FC = () => {
   const [runtimeFilters, setRuntimeFilters] = useState<RuntimeFilter[]>([]);
   const [editAccountOwnerName, setEditAccountOwnerName] = useState<string[]>([]);
   const [accountOwnerNameList, setAccountOwnerNameList] = useState<string[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [jiraIssueId, setJiraIssueId] = useState<string | null>(null);
+  const [options, setOptions] = useState<string[]>([]);
+
+  const updateOptions = (data: string[]) => {
+    const allValues = [...new Set([...data, ...options])];
+    setOptions(allValues);
+  };
 
   useEffect(() => {
     const fetchAndSetData = async () => {
@@ -46,27 +56,6 @@ const TSEHomeDashboardPage: React.FC = () => {
 
         const case_owner_name = 'Case Owner Name';
         const [data] = await searchData({ query: '', columnName: case_owner_name });
-
-        setAccountOwnerNameList(data);
-
-        //   if(data.includes(formattedName)){
-        //     setRuntimeFilters([
-        //         {
-        //             columnName: case_owner_name,
-        //             operator: RuntimeFilterOp.EQ,
-        //             values: [formattedName]
-        //         }
-        //     ])
-        // }else {
-        //   console.log("User not found in the list")
-        //   setRuntimeFilters([
-        //     {
-        //         columnName: case_owner_name,
-        //         operator: RuntimeFilterOp.EQ,
-        //         values: ['azimuddin mohammed']
-        //     }
-        // ])
-        // }
 
         if (embedRef.current) {
           if (data.includes(formattedName)) {
@@ -80,11 +69,11 @@ const TSEHomeDashboardPage: React.FC = () => {
             setEditAccountOwnerName([formattedName]);
           } else {
             embedRef.current.trigger(HostEvent.UpdateRuntimeFilters, [
-              {
-                columnName: case_owner_name,
-                operator: RuntimeFilterOp.EQ,
-                values: ['azimuddin mohammed'],
-              },
+              //     {
+              //       columnName: case_owner_name,
+              //       operator: RuntimeFilterOp.EQ,
+              //       values: ['Akash Singhal']
+              //   }
             ]);
             setEditAccountOwnerName([]);
           }
@@ -96,6 +85,11 @@ const TSEHomeDashboardPage: React.FC = () => {
 
     fetchAndSetData();
   }, [embedRef]);
+
+  const closeModal = useCallback(() => {
+    setIsModalOpen(false);
+    setJiraIssueId(null);
+  }, []);
 
   const handleSuperSelectChange = (newValues: string[]) => {
     setEditAccountOwnerName(newValues);
@@ -119,49 +113,26 @@ const TSEHomeDashboardPage: React.FC = () => {
         navigate('/detailed-view-sfdc');
       }
     },
-    [navigate, runtimeFilters],
+    [navigate],
   );
   const handleVizDoubleClick = (data: any) => {
-    console.log(data.data.embedAnswerData.id);
-    const viz_id = data.data.embedAnswerData.id;
-    console.log('Viz Id : ', viz_id);
-    setCookie('selectedUsers', JSON.stringify(editAccountOwnerName), 7);
+    console.log(data.data);
 
-    let priority = '';
-    switch (viz_id) {
-      case '3f0d5713-75cc-4126-87af-a2a0794a1118':
-        priority = 'MP0';
-        break;
-      case '3099d805-fe1c-4f6d-9ede-2c748a4b8d3c':
-        priority = 'MP1';
-        break;
-      case '1bc3873f-9c02-4dfb-b1ba-5c2ccdeee716':
-        priority = 'MP2';
-        break;
-      case '132a5c84-600e-4182-b8f7-6edb302d52e6':
-        priority = 'MP3';
-        break;
-      case 'e6469a54-223a-456a-b94f-335dc509ef4f':
-        priority = 'P0';
-        break;
-      case '34e95002-bdfa-4515-91d8-7a9be4b5a8e6':
-        priority = 'P1';
-        break;
-      case 'f2852e89-8d03-441a-ad91-53a24f8f1693':
-        priority = 'P2';
-        break;
-      case '425e48ae-d801-47d9-838f-9896947531f5':
-        priority = 'P3';
-        break;
-      default:
-        priority = '';
+    const first = data.data.clickedPoint.deselectedAttributes;
+    const second = data.data.clickedPoint.selectedAttributes;
+    const mergedAttributes = [...first, ...second];
+    const caseSfdcUrlItem = mergedAttributes.find((item) => item.column.name === 'JIRA SCAL URL');
+    const caseSfdcUrlValue = caseSfdcUrlItem ? caseSfdcUrlItem.value : null;
+    console.log(caseSfdcUrlValue, 'This is the url for jira ticket');
+
+    const pattern = /browse\/(SCAL-\d+)/;
+    const match = caseSfdcUrlValue.match(pattern);
+    let issueId = '';
+    if (match) {
+      issueId = match[1];
     }
-    setCookie('PriorityDetailedView', priority, 7);
-    const priority_console = getCookie('PriorityDetailedView');
-    console.log(priority_console, 'Priority Console.');
-    const authUrl = `${process.env.REACT_APP_BE_URL}/salesforce/oauth2/auth`;
-    window.location.href = authUrl;
-    // navigate('/details-view-sfdc');
+    setJiraIssueId(issueId);
+    setIsModalOpen(true);
   };
 
   function setCookie(name: any, value: any, days: any) {
@@ -187,16 +158,18 @@ const TSEHomeDashboardPage: React.FC = () => {
   const desktopLayout = (
     <BaseRow>
       <BaseCol xl={24} lg={24}>
-        <div style={{ maxWidth: '25em', marginLeft: '1em' }}>
+        {/* <div style={{ maxWidth: '25em', marginLeft: '1em' }}>
           <SuperSelect
             columnName="Case Owner Name"
             defaultValues={editAccountOwnerName}
             updateValues={handleSuperSelectChange}
           />
-        </div>
+        </div> */}
         <TseWrapper>
           <LiveboardEmbed
             ref={embedRef}
+            activeTabId="04ba6c35-aea7-42b8-9a83-6dfebb595759"
+            visibleTabs={['04ba6c35-aea7-42b8-9a83-6dfebb595759']}
             hiddenActions={[
               Action.AddToFavorites,
               Action.Edit,
@@ -208,11 +181,14 @@ const TSEHomeDashboardPage: React.FC = () => {
             onVizPointDoubleClick={(data: any) => {
               handleVizDoubleClick(data);
             }}
-            className="tse-homepage-style"
+            // defaultHeight={800}
+            frameParams={{ height: '900px' }}
+            fullHeight={true}
+            className="tse-jira-tickets-wait-ci-style"
             liveboardId={liveboardId}
             runtimeFilters={runtimeFilters}
             onCustomAction={handleCustomAction}
-            preRenderId="tse-homepage"
+            preRenderId="tse-jira-tickets-wait-ci"
             customizations={{
               style: {
                 customCSS: {
@@ -231,6 +207,9 @@ const TSEHomeDashboardPage: React.FC = () => {
             }}
           />
         </TseWrapper>
+        {isModalOpen && jiraIssueId && (
+          <JiraIssueDetailsModal jiraIssueId={jiraIssueId} isOpen={isModalOpen} onClose={closeModal} />
+        )}
       </BaseCol>
     </BaseRow>
   );
@@ -243,4 +222,4 @@ const TSEHomeDashboardPage: React.FC = () => {
   );
 };
 
-export default TSEHomeDashboardPage;
+export default JiraWaitingCI;

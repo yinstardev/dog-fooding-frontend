@@ -109,6 +109,7 @@ export const SupportCentralLiveboardPage: React.FC = () => {
   const [jiraIssueDetails, setJiraIssueDetails] = useState<IssueDetail | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [preRenderID, setPreRenderID] = useState<string | undefined>(undefined);
 
   const handleCustomAction = useCallback((payload: any) => {
     if (payload.data.id === 'show-jira-details') {
@@ -119,6 +120,7 @@ export const SupportCentralLiveboardPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    setPreRenderID('support-central-lb');
     const fetchFiltersAndTabs = async () => {
       const { filters, tabs } = await getFilterAndTabs();
       setAccountNames(filters.accountNames);
@@ -163,6 +165,49 @@ export const SupportCentralLiveboardPage: React.FC = () => {
     const updatedTabs = tabOptions?.filter((tab) => selectedTabIds.includes(tab.name)) || [];
     setSelectedTabs(updatedTabs);
     updateTabsAndFiltersInDatabase(updatedTabs, accountNames, caseNumbers);
+  };
+
+  const handleVizDoubleClick = useCallback(async (data: any) => {
+    console.log(data.data);
+    const first = data.data.clickedPoint.deselectedAttributes;
+    const second = data.data.clickedPoint.selectedAttributes;
+    const mergedAttributes = [...first, ...second];
+    console.log(mergedAttributes, 'This is merged List');
+    const caseSfdcUrlItem = mergedAttributes.find((item) => item.column.name === 'Jira Scal Url Link');
+    const caseSfdcUrlItem2 = mergedAttributes.find((item) => item.column.name === 'Jira Scal Key');
+    let caseSfdcUrlValue = null;
+    let caseSfdcUrlValue2 = null;
+    if (caseSfdcUrlItem) {
+      caseSfdcUrlValue = caseSfdcUrlItem.value;
+    }
+    if (caseSfdcUrlItem2) {
+      caseSfdcUrlValue2 = caseSfdcUrlItem2.value;
+    }
+    console.log(caseSfdcUrlValue, 'This is the url for jira ticket');
+    let issueId = '';
+    if (caseSfdcUrlValue) {
+      const pattern1 = /SCAL-\d+/g;
+      const matches1 = caseSfdcUrlValue.match(pattern1);
+      if (matches1) {
+        issueId = matches1[0];
+        console.log(issueId);
+
+        setJiraIssueId(issueId);
+        setIsModalOpen(true);
+      }
+      // console.log(matches[0], "These are the possible matches");
+    }
+    if (caseSfdcUrlValue2) {
+      issueId = caseSfdcUrlValue2;
+      console.log(issueId);
+      setJiraIssueId(issueId);
+      setIsModalOpen(true);
+    }
+  }, []);
+
+  const handleRendered = () => {
+    setPreRenderID('support-central-lb');
+    // embedRef.current.preRender(true);
   };
 
   const tabIdsForVisibleTabs = selectedTabs.length > 0 ? selectedTabs.map((tab) => tab.id) : undefined;
@@ -267,6 +312,7 @@ export const SupportCentralLiveboardPage: React.FC = () => {
                   Action.SyncToSheets,
                   Action.ManagePipelines,
                 ]}
+                onVizPointDoubleClick={handleVizDoubleClick}
                 onCustomAction={handleCustomAction}
                 disabledActions={[
                   Action.DownloadAsPdf,
@@ -280,6 +326,8 @@ export const SupportCentralLiveboardPage: React.FC = () => {
                   { columnName: 'Case Number', operator: RuntimeFilterOp.EQ, values: caseNumbers },
                 ]}
                 visibleTabs={tabIdsForVisibleTabs}
+                // onLiveboardRendered={handleRendered}
+                preRenderId={preRenderID}
                 customizations={{
                   style: {
                     customCSS: {
