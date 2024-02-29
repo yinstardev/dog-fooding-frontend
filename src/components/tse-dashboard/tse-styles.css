@@ -1,0 +1,12 @@
+.tse-viz-one iframe {
+  min-height: 400px;
+  height: 100%;
+}
+
+.tse-viz-two iframe {
+  min-height: 300px;
+}
+
+.tse-viz-three {
+  height: 100%;
+}
