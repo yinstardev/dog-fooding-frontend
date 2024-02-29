@@ -48,7 +48,7 @@ export const fetchUserAndToken = async () => {
 
     const tokenResponse = await axios.post(`${be_url}/getauthtoken`, { username: username }, config);
 
-    const getTokenForObjectResponse = await axios.post(`${be_url}/getTokenForObject`, { username }, config);
+    // const getTokenForObjectResponse = await axios.post(`${be_url}/getTokenForObject`, { username }, config);
 
     // console.log(getTokenForObjectResponse.data.token.token, "This is token for object");
     // return { email: payload.username, token: getTokenForObjectResponse.data.token.token };

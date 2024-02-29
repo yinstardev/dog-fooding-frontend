@@ -120,17 +120,18 @@ export const SupportCentralLiveboardPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    setPreRenderID('support-central-lb');
     const fetchFiltersAndTabs = async () => {
       const { filters, tabs } = await getFilterAndTabs();
       setAccountNames(filters.accountNames);
       setCaseNumbers(filters.caseNumbers);
       setSelectedTabs(tabs);
+      setPreRenderID('support-central-lb' + selectedTabs.join());
 
       setEditAccountNames(filters.accountNames);
       setEditCaseNumbers(filters.caseNumbers);
     };
     fetchFiltersAndTabs();
+
 
     if (embedRef.current) {
       const embedInstance = embedRef.current;
@@ -327,6 +328,7 @@ export const SupportCentralLiveboardPage: React.FC = () => {
                 ]}
                 visibleTabs={tabIdsForVisibleTabs}
                 // onLiveboardRendered={handleRendered}
+                // usePrerenderedIfAvailable={true}
                 preRenderId={preRenderID}
                 customizations={{
                   style: {
