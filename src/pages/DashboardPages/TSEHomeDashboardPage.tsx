@@ -143,7 +143,6 @@ const TSEHomeDashboardPage: React.FC = () => {
     console.log(priority_console, 'Priority Console.');
     const authUrl = `${process.env.REACT_APP_BE_URL}/salesforce/oauth2/auth`;
     window.location.href = authUrl;
-    // navigate('/details-view-sfdc');
   };
 
   function setCookie(name: any, value: any, days: any) {
