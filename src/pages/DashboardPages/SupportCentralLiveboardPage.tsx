@@ -132,7 +132,6 @@ export const SupportCentralLiveboardPage: React.FC = () => {
     };
     fetchFiltersAndTabs();
 
-
     if (embedRef.current) {
       const embedInstance = embedRef.current;
 
