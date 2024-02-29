@@ -50,7 +50,6 @@ const TSEHomeDashboardPage: React.FC = () => {
 
         setAccountOwnerNameList(data);
 
-
         if (embedRef.current) {
           if (data.includes(formattedName)) {
             embedRef.current.trigger(HostEvent.UpdateRuntimeFilters, [
