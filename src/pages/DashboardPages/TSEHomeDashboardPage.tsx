@@ -104,7 +104,6 @@ const TSEHomeDashboardPage: React.FC = () => {
     [navigate, runtimeFilters],
   );
   const handleVizDoubleClick = (data: any) => {
-    // console.log(data);
     const allowedVizIds = [
       '2b259a42-9faf-4446-8aae-d77e790174d9',
       'ee46d717-3051-4402-bc62-b5cf8d1921f1',
