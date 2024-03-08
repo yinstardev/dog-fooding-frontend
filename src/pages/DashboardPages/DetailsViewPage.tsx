@@ -165,7 +165,6 @@ const DetailsViewPage = () => {
 
     const caseId = '5003n00002lS4FQAA0';
     setIframSource(caseId);
-
   }, [status]);
 
   const handleCustomAction = useCallback((paylod: any) => {
@@ -262,8 +261,8 @@ const DetailsViewPage = () => {
         </div>
         <TseWrapper>{liveboardEmbedComponent}</TseWrapper>
       </LeftSideCol>
-      <div style={{ display: 'flex', width: '100%', marginTop:'6em' }}>
-        <div id="iframeparent" style={{ flexGrow: 1, minWidth: 'inherit', height:'90%' }}>
+      <div style={{ display: 'flex', width: '100%', marginTop: '6em' }}>
+        <div id="iframeparent" style={{ flexGrow: 1, minWidth: 'inherit', height: '90%' }}>
           {iframeUrl && !loading ? (
             <iframe
               id="iframeId"

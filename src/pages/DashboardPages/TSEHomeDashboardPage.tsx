@@ -105,7 +105,12 @@ const TSEHomeDashboardPage: React.FC = () => {
   );
   const handleVizDoubleClick = (data: any) => {
     // console.log(data);
-    const allowedVizIds = ['2b259a42-9faf-4446-8aae-d77e790174d9', 'ee46d717-3051-4402-bc62-b5cf8d1921f1', 'adc0ce7b-f383-4eb0-893d-ce265c0e3747', 'af185922-5648-4e26-94c2-826ff8dfab36'];
+    const allowedVizIds = [
+      '2b259a42-9faf-4446-8aae-d77e790174d9',
+      'ee46d717-3051-4402-bc62-b5cf8d1921f1',
+      'adc0ce7b-f383-4eb0-893d-ce265c0e3747',
+      'af185922-5648-4e26-94c2-826ff8dfab36',
+    ];
     // console.log(data.data);
     // if(allowedVizIds.includes(data.data.vizId)){
 
@@ -148,12 +153,12 @@ const TSEHomeDashboardPage: React.FC = () => {
     console.log(priority_console, 'Priority Console.');
     const authUrl = `${process.env.REACT_APP_BE_URL}/salesforce/oauth2/auth`;
     window.location.href = authUrl;
-    navigate('/details-view-sfdc')
+    navigate('/details-view-sfdc');
 
-  // } else {
-  //   console.log("Double click doesn't work here. No Action Assigned to this Viz");
-  //   return;
-  // }
+    // } else {
+    //   console.log("Double click doesn't work here. No Action Assigned to this Viz");
+    //   return;
+    // }
   };
 
   function setCookie(name: any, value: any, days: any) {
