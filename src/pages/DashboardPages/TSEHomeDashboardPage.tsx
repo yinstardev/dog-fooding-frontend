@@ -33,7 +33,7 @@ const TSEHomeDashboardPage: React.FC = () => {
   const embedRef = useEmbedRef();
   const navigate = useNavigate();
 
-  const liveboardId = '4f737ba5-aebf-4fd0-9525-c4ebdd29a51b';
+  const liveboardId = '72699018-683d-4b42-b599-1ba304beb281';
   const [runtimeFilters, setRuntimeFilters] = useState<RuntimeFilter[]>([]);
   const [editAccountOwnerName, setEditAccountOwnerName] = useState<string[]>([]);
   const [accountOwnerNameList, setAccountOwnerNameList] = useState<string[]>([]);
@@ -104,8 +104,13 @@ const TSEHomeDashboardPage: React.FC = () => {
     [navigate, runtimeFilters],
   );
   const handleVizDoubleClick = (data: any) => {
-    console.log(data.data.embedAnswerData.id);
-    const viz_id = data.data.embedAnswerData.id;
+    // console.log(data);
+    const allowedVizIds = ['2b259a42-9faf-4446-8aae-d77e790174d9', 'ee46d717-3051-4402-bc62-b5cf8d1921f1', 'adc0ce7b-f383-4eb0-893d-ce265c0e3747', 'af185922-5648-4e26-94c2-826ff8dfab36'];
+    // console.log(data.data);
+    // if(allowedVizIds.includes(data.data.vizId)){
+
+    console.log(data.data.vizId);
+    const viz_id = data.data.vizId;
     console.log('Viz Id : ', viz_id);
     setCookie('selectedUsers', JSON.stringify(editAccountOwnerName), 7);
 
@@ -123,16 +128,16 @@ const TSEHomeDashboardPage: React.FC = () => {
       case '132a5c84-600e-4182-b8f7-6edb302d52e6':
         priority = 'MP3';
         break;
-      case 'e6469a54-223a-456a-b94f-335dc509ef4f':
+      case '2b259a42-9faf-4446-8aae-d77e790174d9':
         priority = 'P0';
         break;
-      case '34e95002-bdfa-4515-91d8-7a9be4b5a8e6':
+      case 'ee46d717-3051-4402-bc62-b5cf8d1921f1':
         priority = 'P1';
         break;
-      case 'f2852e89-8d03-441a-ad91-53a24f8f1693':
+      case 'adc0ce7b-f383-4eb0-893d-ce265c0e3747':
         priority = 'P2';
         break;
-      case '425e48ae-d801-47d9-838f-9896947531f5':
+      case 'af185922-5648-4e26-94c2-826ff8dfab36':
         priority = 'P3';
         break;
       default:
@@ -143,6 +148,12 @@ const TSEHomeDashboardPage: React.FC = () => {
     console.log(priority_console, 'Priority Console.');
     const authUrl = `${process.env.REACT_APP_BE_URL}/salesforce/oauth2/auth`;
     window.location.href = authUrl;
+    navigate('/details-view-sfdc')
+
+  // } else {
+  //   console.log("Double click doesn't work here. No Action Assigned to this Viz");
+  //   return;
+  // }
   };
 
   function setCookie(name: any, value: any, days: any) {

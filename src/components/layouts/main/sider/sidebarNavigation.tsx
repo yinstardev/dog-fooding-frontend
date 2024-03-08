@@ -33,17 +33,17 @@ export const sidebarNavigation: SidebarNavigationItem[] = [
     // TODO use path variable
     url: '/support-central',
   },
-  {
-    title: 'Champagne',
-    key: 'champagne',
-    // TODO use path variable
-    url: '/champagne',
-  },
-  {
-    title: 'Tickets Waiting for CI',
-    key: 'jira-ci',
-    url: '/jira-wait-ci',
-  },
+  // {
+  //   title: 'Champagne',
+  //   key: 'champagne',
+  //   // TODO use path variable
+  //   url: '/champagne',
+  // },
+  // {
+  //   title: 'Tickets Waiting for CI',
+  //   key: 'jira-ci',
+  //   url: '/jira-wait-ci',
+  // },
   // {
   //   title: 'SFDC Cases',
   //   key: 'sfdc-view',

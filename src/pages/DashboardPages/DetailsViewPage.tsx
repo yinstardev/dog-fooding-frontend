@@ -17,6 +17,7 @@ import { fetchUserAndToken } from '@app/api/getUserAndToken';
 const { Option } = Select;
 import './dashboard.css';
 import { ThemeType } from '@app/interfaces/interfaces';
+import axios from 'axios';
 
 interface RuntimeFilter {
   columnName: string;
@@ -162,8 +163,9 @@ const DetailsViewPage = () => {
     };
     userSpecificLB();
 
-    const caseId = '500VE000002GtCHYA0';
+    const caseId = '5003n00002lS4FQAA0';
     setIframSource(caseId);
+
   }, [status]);
 
   const handleCustomAction = useCallback((paylod: any) => {
@@ -240,9 +242,6 @@ const DetailsViewPage = () => {
   return (
     <div key={theme} className="container-detailedview" style={{ display: 'flex' }}>
       <LeftSideCol className="LeftSideListView" style={{ width: '700px' }}>
-        <Btn style={{ margin: '1em' }} onClick={() => navigate('/')}>
-          Get Back to LB
-        </Btn>
         <div style={{ margin: '1em' }}>
           <label style={{ marginRight: '1.1em' }} htmlFor="prioritySelect">
             Filter by Priority:
@@ -263,8 +262,8 @@ const DetailsViewPage = () => {
         </div>
         <TseWrapper>{liveboardEmbedComponent}</TseWrapper>
       </LeftSideCol>
-      <div style={{ display: 'flex', width: '100%' }}>
-        <div id="iframeparent" style={{ flexGrow: 1, minWidth: 'inherit' }}>
+      <div style={{ display: 'flex', width: '100%', marginTop:'6em' }}>
+        <div id="iframeparent" style={{ flexGrow: 1, minWidth: 'inherit', height:'90%' }}>
           {iframeUrl && !loading ? (
             <iframe
               id="iframeId"
