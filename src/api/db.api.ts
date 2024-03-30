@@ -1,6 +1,11 @@
 import axios from 'axios';
 import { fetchUserAndToken } from './getUserAndToken';
 
+const getJwtTokenFromLocalStorage = () => {
+  const token = localStorage.getItem('token');
+  return token;
+};
+
 const be_url = process.env.REACT_APP_BE_URL || '';
 
 export const saveFilterAndTabs = async (filters: Filters, tabs: Tab[]) => {
@@ -24,9 +29,14 @@ export const saveFilterAndTabs = async (filters: Filters, tabs: Tab[]) => {
 
 export const getFilterAndTabs = async () => {
   try {
-    const { email, token } = await fetchUserAndToken();
+    const jwtToken = getJwtTokenFromLocalStorage();
+    if (!jwtToken) throw new Error('JWT token not found');
+
+    const emailResponse = await fetchUserAndToken();
+    const email = emailResponse.email;
 
     const response = await axios.get(`${be_url}/getTabsAndFilters`, {
+      headers: { Authorization: `Bearer ${jwtToken}` },
       params: { email },
     });
 
