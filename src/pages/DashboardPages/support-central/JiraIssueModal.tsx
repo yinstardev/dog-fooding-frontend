@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BaseModal } from '@app/components/common/BaseModal/BaseModal';
 import axios from 'axios';
 import { Btn } from '@app/components/header/components/notificationsDropdown/NotificationsOverlay/NotificationsOverlay.styles';
+import { fetchUserAndToken } from '@app/api/getUserAndToken';
 
 interface Mention {
   attrs: {
@@ -83,6 +84,11 @@ interface JiraIssueDetailsModalProps {
   onClose: () => void;
 }
 
+const getJwtTokenFromLocalStorage = () => {
+  const token = localStorage.getItem('token');
+  return token;
+};
+
 const JiraIssueDetailsModal: React.FC<JiraIssueDetailsModalProps> = ({ jiraIssueId, isOpen, onClose }) => {
   const [issueDetails, setIssueDetails] = useState<IssueDetail | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -97,7 +103,14 @@ const JiraIssueDetailsModal: React.FC<JiraIssueDetailsModalProps> = ({ jiraIssue
     if (!jiraIssueId) return;
     setIsLoading(true);
     try {
-      const response = await axios.get(`${process.env.REACT_APP_BE_URL}/jira/issue/${jiraIssueId}`);
+      const jwtToken = getJwtTokenFromLocalStorage();
+      if (!jwtToken) throw new Error('JWT token not found');
+      const emailResponse = await fetchUserAndToken();
+      const email = emailResponse.email;
+      const response = await axios.get(`${process.env.REACT_APP_BE_URL}/jira/issue/${jiraIssueId}`, {
+        headers: { Authorization: `Bearer ${jwtToken}` },
+        params: { email },
+      });
       console.log(response.data.fields.comment.comments);
       setIssueDetails(response.data);
     } catch (error) {
