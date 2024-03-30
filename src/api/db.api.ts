@@ -27,6 +27,7 @@ export const getFilterAndTabs = async () => {
     const { email, token } = await fetchUserAndToken();
 
     const response = await axios.get(`${be_url}/getTabsAndFilters`, {
+      headers: { Authorization: `Bearer ${token}` },
       params: { email },
     });
 

@@ -111,6 +111,7 @@ export const SupportCentralLiveboardPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [preRenderID, setPreRenderID] = useState<string | undefined>(undefined);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const handleCustomAction = useCallback((payload: any) => {
     if (payload.data.id === 'show-jira-details') {
@@ -132,16 +133,7 @@ export const SupportCentralLiveboardPage: React.FC = () => {
       setEditCaseNumbers(filters.caseNumbers);
     };
     fetchFiltersAndTabs();
-
-    if (embedRef.current) {
-      const embedInstance = embedRef.current;
-
-      embedInstance.on(EmbedEvent.CustomAction, (payload: any) => {
-        if (payload.id == 'show-jira-details') {
-          console.log('Custom Action is Activated now');
-        }
-      });
-    }
+    setIsInitialized(true);
   }, []);
 
   const closeModal = useCallback(() => {
@@ -156,7 +148,6 @@ export const SupportCentralLiveboardPage: React.FC = () => {
   ) => {
     try {
       await saveFilterAndTabs({ accountNames: updatedAccountNames, caseNumbers: updatedCaseNumbers }, updatedTabs);
-      console.log('Tabs and filters updated in database.');
     } catch (error) {
       console.error('Error updating tabs and filters in database:', error);
     }
@@ -207,8 +198,8 @@ export const SupportCentralLiveboardPage: React.FC = () => {
   }, []);
 
   const handleRendered = () => {
-    setPreRenderID('support-central-lb');
-    // embedRef.current.preRender(true);
+    setPreRenderID('support-central-lb' + selectedTabs.join());
+    embedRef.current.preRender(true);
   };
 
   const tabIdsForVisibleTabs = selectedTabs.length > 0 ? selectedTabs.map((tab) => tab.id) : undefined;
@@ -322,10 +313,14 @@ export const SupportCentralLiveboardPage: React.FC = () => {
                   Action.RenameModalTitleDescription,
                   Action.SpotIQAnalyze,
                 ]}
-                runtimeFilters={[
-                  { columnName: 'Account Name', operator: RuntimeFilterOp.EQ, values: accountNames },
-                  { columnName: 'Case Number', operator: RuntimeFilterOp.EQ, values: caseNumbers },
-                ]}
+                runtimeFilters={
+                  isInitialized
+                    ? []
+                    : [
+                        { columnName: 'Account Name', operator: RuntimeFilterOp.EQ, values: accountNames },
+                        { columnName: 'Case Number', operator: RuntimeFilterOp.EQ, values: caseNumbers },
+                      ]
+                }
                 visibleTabs={tabIdsForVisibleTabs}
                 // onLiveboardRendered={handleRendered}
                 // usePrerenderedIfAvailable={true}

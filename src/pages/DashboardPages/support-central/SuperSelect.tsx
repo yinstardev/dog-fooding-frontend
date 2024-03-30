@@ -55,7 +55,20 @@ export const SuperSelect: React.FC<SuperSelectProps> = ({ columnName, defaultVal
               setIsLoading(false);
               return;
             }
-            updateOptions(values);
+            const sortedValues = values.sort((a, b) => {
+              const startsWithA = a.toLowerCase().startsWith(query.toLowerCase());
+              const startsWithB = b.toLowerCase().startsWith(query.toLowerCase());
+
+              if (startsWithA && !startsWithB) {
+                return -1;
+              } else if (!startsWithA && startsWithB) {
+                return 1;
+              } else {
+                return a.localeCompare(b);
+              }
+            });
+
+            updateOptions(sortedValues);
           } catch (e) {
             console.error(e);
           }

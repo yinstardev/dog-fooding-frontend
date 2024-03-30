@@ -37,6 +37,9 @@ const TSEHomeDashboardPage: React.FC = () => {
   const [runtimeFilters, setRuntimeFilters] = useState<RuntimeFilter[]>([]);
   const [editAccountOwnerName, setEditAccountOwnerName] = useState<string[]>([]);
   const [accountOwnerNameList, setAccountOwnerNameList] = useState<string[]>([]);
+  const [filterByName, setFilterByName] = useState<string>('');
+
+  const case_owner_name = 'Case Owner Name';
 
   useEffect(() => {
     const fetchAndSetData = async () => {
@@ -44,55 +47,14 @@ const TSEHomeDashboardPage: React.FC = () => {
         const { email } = await fetchUserAndToken();
         const emailNamePart = email.split('@')[0];
         const formattedName = emailNamePart.split('.').join(' ');
-
-        const case_owner_name = 'Case Owner Name';
-        const [data] = await searchData({ query: '', columnName: case_owner_name });
-
-        setAccountOwnerNameList(data);
-
-        if (embedRef.current) {
-          if (data.includes(formattedName)) {
-            embedRef.current.trigger(HostEvent.UpdateRuntimeFilters, [
-              {
-                columnName: case_owner_name,
-                operator: RuntimeFilterOp.EQ,
-                values: [formattedName],
-              },
-            ]);
-            setEditAccountOwnerName([formattedName]);
-          } else {
-            embedRef.current.trigger(HostEvent.UpdateRuntimeFilters, [
-              {
-                columnName: case_owner_name,
-                operator: RuntimeFilterOp.EQ,
-                values: ['azimuddin mohammed'],
-              },
-            ]);
-            setEditAccountOwnerName([]);
-          }
-        }
+        setFilterByName('azimuddin mohammed');
       } catch (error) {
         console.error('Error setting data:', error);
       }
     };
 
     fetchAndSetData();
-  }, [embedRef]);
-
-  const handleSuperSelectChange = (newValues: string[]) => {
-    setEditAccountOwnerName(newValues);
-    console.log(newValues);
-
-    if (embedRef.current) {
-      embedRef.current.trigger(HostEvent.UpdateRuntimeFilters, [
-        {
-          columnName: 'Case Owner Name',
-          operator: RuntimeFilterOp.EQ,
-          values: newValues,
-        },
-      ]);
-    }
-  };
+  }, []);
 
   const handleCustomAction = useCallback(
     (payload: any) => {
@@ -104,18 +66,7 @@ const TSEHomeDashboardPage: React.FC = () => {
     [navigate, runtimeFilters],
   );
   const handleVizDoubleClick = (data: any) => {
-    const allowedVizIds = [
-      '2b259a42-9faf-4446-8aae-d77e790174d9',
-      'ee46d717-3051-4402-bc62-b5cf8d1921f1',
-      'adc0ce7b-f383-4eb0-893d-ce265c0e3747',
-      'af185922-5648-4e26-94c2-826ff8dfab36',
-    ];
-    // console.log(data.data);
-    // if(allowedVizIds.includes(data.data.vizId)){
-
-    console.log(data.data.vizId);
     const viz_id = data.data.vizId;
-    console.log('Viz Id : ', viz_id);
     setCookie('selectedUsers', JSON.stringify(editAccountOwnerName), 7);
 
     let priority = '';
@@ -148,16 +99,9 @@ const TSEHomeDashboardPage: React.FC = () => {
         priority = '';
     }
     setCookie('PriorityDetailedView', priority, 7);
-    const priority_console = getCookie('PriorityDetailedView');
-    console.log(priority_console, 'Priority Console.');
     const authUrl = `${process.env.REACT_APP_BE_URL}/salesforce/oauth2/auth`;
     window.location.href = authUrl;
     navigate('/details-view-sfdc');
-
-    // } else {
-    //   console.log("Double click doesn't work here. No Action Assigned to this Viz");
-    //   return;
-    // }
   };
 
   function setCookie(name: any, value: any, days: any) {
@@ -169,27 +113,10 @@ const TSEHomeDashboardPage: React.FC = () => {
     }
     document.cookie = name + '=' + (value || '') + expires + '; path=/';
   }
-  function getCookie(name: any) {
-    const nameEQ = name + '=';
-    const ca = document.cookie.split(';');
-    for (let i = 0; i < ca.length; i++) {
-      let c = ca[i];
-      while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-      if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
-    }
-    return null;
-  }
 
   const desktopLayout = (
     <BaseRow>
       <BaseCol xl={24} lg={24}>
-        <div style={{ maxWidth: '25em', marginLeft: '1em' }}>
-          <SuperSelect
-            columnName="Case Owner Name"
-            defaultValues={editAccountOwnerName}
-            updateValues={handleSuperSelectChange}
-          />
-        </div>
         <TseWrapper>
           <LiveboardEmbed
             ref={embedRef}
@@ -206,7 +133,13 @@ const TSEHomeDashboardPage: React.FC = () => {
             }}
             className="tse-homepage-style"
             liveboardId={liveboardId}
-            runtimeFilters={runtimeFilters}
+            runtimeFilters={[
+              {
+                columnName: case_owner_name,
+                operator: RuntimeFilterOp.EQ,
+                values: [filterByName],
+              },
+            ]}
             onCustomAction={handleCustomAction}
             preRenderId="tse-homepage"
             customizations={{
