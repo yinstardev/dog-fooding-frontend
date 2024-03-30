@@ -31,6 +31,11 @@ declare global {
   }
 }
 
+const getJwtTokenFromLocalStorage = () => {
+  const token = localStorage.getItem('token');
+  return token;
+};
+
 const be_url = process.env.REACT_APP_BE_URL;
 
 const DetailsViewPage = () => {
@@ -85,7 +90,14 @@ const DetailsViewPage = () => {
   const setIframSource = async (caseId: any) => {
     const userId = searchURLParam.get('user_id');
     try {
-      const response = await fetch(`${be_url}/api/salesforce/iframe?userId=${userId}&caseId=${caseId}`);
+      const jwtToken = getJwtTokenFromLocalStorage();
+      if (!jwtToken) throw new Error('JWT token not found');
+
+      const emailResponse = await fetchUserAndToken();
+      const email = emailResponse.email;
+      const response = await fetch(`${be_url}/api/salesforce/iframe?userId=${userId}&caseId=${caseId}`, {
+        headers: { Authorization: `Bearer ${jwtToken}` },
+      });
       const data = await response.json();
       const iframeUrl = data.url;
 

@@ -10,16 +10,26 @@ const be_url = process.env.REACT_APP_BE_URL || '';
 
 export const saveFilterAndTabs = async (filters: Filters, tabs: Tab[]) => {
   try {
-    const { email, token } = await fetchUserAndToken();
+    const jwtToken = getJwtTokenFromLocalStorage();
+    if (!jwtToken) throw new Error('JWT token not found');
+
+    const emailResponse = await fetchUserAndToken();
+    const email = emailResponse.email;
 
     const requestData = {
       email,
       filters,
       tabs,
     };
-    console.log(' Just before the request to backend', requestData);
 
-    await axios.post(`${be_url}/addTabsAndFilters`, requestData);
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${jwtToken}`,
+      },
+    };
+
+    await axios.post(`${be_url}/addTabsAndFilters`, requestData, config);
 
     console.log('Filter and tabs values saved successfully.');
   } catch (error) {
